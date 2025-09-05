@@ -1,0 +1,67 @@
+{
+  "id": "session-1757091201388",
+  "config": {
+    "task": "Audit and improve the provided candidate",
+    "scope": "diff",
+    "threshold": 85,
+    "maxCycles": 1,
+    "candidates": 1,
+    "judges": [
+      "internal"
+    ],
+    "applyFixes": false
+  },
+  "history": [],
+  "iterations": [
+    {
+      "thoughtNumber": 1,
+      "code": "I need to analyze this problem step by step.",
+      "auditResult": {
+        "overall": 100,
+        "dimensions": [
+          {
+            "name": "accuracy",
+            "score": 100
+          },
+          {
+            "name": "completeness",
+            "score": 100
+          },
+          {
+            "name": "clarity",
+            "score": 100
+          },
+          {
+            "name": "actionability",
+            "score": 100
+          },
+          {
+            "name": "human_likeness",
+            "score": 100
+          }
+        ],
+        "verdict": "pass",
+        "review": {
+          "summary": "No code detected, audit not required",
+          "inline": [],
+          "citations": []
+        },
+        "proposed_diff": null,
+        "iterations": 0,
+        "judge_cards": [
+          {
+            "model": "synchronous-audit-engine",
+            "score": 100,
+            "notes": "No code detected, audit not required"
+          }
+        ]
+      },
+      "timestamp": 1757091202391
+    }
+  ],
+  "currentLoop": 1,
+  "isComplete": false,
+  "codexContextActive": false,
+  "createdAt": 1757091202390,
+  "updatedAt": 1757091202392
+}

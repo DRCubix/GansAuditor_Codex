@@ -1,0 +1,112 @@
+{
+  "id": "pressure-test-session",
+  "config": {
+    "task": "Audit and improve the provided candidate",
+    "scope": "diff",
+    "threshold": 85,
+    "maxCycles": 1,
+    "candidates": 1,
+    "judges": [
+      "internal"
+    ],
+    "applyFixes": false
+  },
+  "history": [],
+  "iterations": [
+    {
+      "thoughtNumber": 9,
+      "code": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+      "auditResult": {
+        "overall": 85,
+        "dimensions": [
+          {
+            "name": "accuracy",
+            "score": 90
+          },
+          {
+            "name": "completeness",
+            "score": 80
+          },
+          {
+            "name": "clarity",
+            "score": 85
+          },
+          {
+            "name": "actionability",
+            "score": 85
+          },
+          {
+            "name": "human_likeness",
+            "score": 85
+          }
+        ],
+        "verdict": "pass",
+        "review": {
+          "summary": "Good implementation with room for improvement",
+          "inline": [],
+          "citations": []
+        },
+        "proposed_diff": null,
+        "iterations": 1,
+        "judge_cards": [
+          {
+            "model": "test-judge",
+            "score": 85,
+            "notes": "Test review with detailed feedback"
+          }
+        ]
+      },
+      "timestamp": 1757095815571
+    },
+    {
+      "thoughtNumber": 10,
+      "code": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+      "auditResult": {
+        "overall": 85,
+        "dimensions": [
+          {
+            "name": "accuracy",
+            "score": 90
+          },
+          {
+            "name": "completeness",
+            "score": 80
+          },
+          {
+            "name": "clarity",
+            "score": 85
+          },
+          {
+            "name": "actionability",
+            "score": 85
+          },
+          {
+            "name": "human_likeness",
+            "score": 85
+          }
+        ],
+        "verdict": "pass",
+        "review": {
+          "summary": "Good implementation with room for improvement",
+          "inline": [],
+          "citations": []
+        },
+        "proposed_diff": null,
+        "iterations": 1,
+        "judge_cards": [
+          {
+            "model": "test-judge",
+            "score": 85,
+            "notes": "Test review with detailed feedback"
+          }
+        ]
+      },
+      "timestamp": 1757095815572
+    }
+  ],
+  "currentLoop": 10,
+  "isComplete": false,
+  "codexContextActive": false,
+  "createdAt": 1757033774102,
+  "updatedAt": 1757095815572
+}

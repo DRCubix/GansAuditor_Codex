@@ -1,0 +1,106 @@
+{
+  "metadata": {
+    "name": "Development Environment Configuration",
+    "description": "Developer-friendly settings with relaxed validation and experimental features enabled",
+    "environment": "development",
+    "version": "2.0.0",
+    "author": "Platform Team",
+    "tags": ["development", "flexible", "experimental"],
+    "createdAt": "2024-01-15T10:30:00Z",
+    "updatedAt": "2024-01-15T10:30:00Z",
+    "validatedWith": "system-prompt-validator-2.0.0"
+  },
+  "version": "2.0.0",
+  "systemPrompt": {
+    "identity": {
+      "name": "Kilo Code Dev",
+      "role": "Adversarial Auditor",
+      "stance": "constructive-adversarial",
+      "authority": "spec-and-steering-ground-truth"
+    },
+    "workflow": {
+      "steps": 8,
+      "enforceOrder": false,
+      "allowSkipping": true,
+      "evidenceRequired": false,
+      "customSteps": []
+    },
+    "qualityFramework": {
+      "dimensions": 6,
+      "weightingScheme": "development-relaxed",
+      "scoringScale": "0-100",
+      "aggregationMethod": "weighted-average",
+      "weights": {
+        "correctnessCompleteness": 0.25,
+        "tests": 0.15,
+        "styleConventions": 0.10,
+        "security": 0.10,
+        "performance": 0.15,
+        "docsTraceability": 0.25
+      }
+    },
+    "completionCriteria": {
+      "tiers": 3,
+      "killSwitches": 2,
+      "shipGates": 3,
+      "stagnationThreshold": 0.90,
+      "maxIterations": 15,
+      "tierThresholds": {
+        "tier1": { "score": 85, "minLoops": 5 },
+        "tier2": { "score": 75, "minLoops": 8 },
+        "tier3": { "score": 65, "minLoops": 10 }
+      }
+    },
+    "integration": {
+      "sessionManagement": true,
+      "codexIntegration": true,
+      "contextAwareness": true,
+      "performanceOptimization": false
+    },
+    "security": {
+      "sanitizePII": true,
+      "validateCommands": false,
+      "respectPermissions": false,
+      "flagVulnerabilities": true,
+      "commandValidationLevel": "lenient"
+    },
+    "performance": {
+      "contextTokenLimit": 300000,
+      "auditTimeoutMs": 60000,
+      "enableCaching": false,
+      "enableProgressTracking": true,
+      "maxConcurrentAudits": 1,
+      "memoryLimit": "1GB"
+    },
+    "monitoring": {
+      "enabled": true,
+      "logLevel": "debug",
+      "metricsCollection": true,
+      "alerting": false,
+      "performanceTracking": true
+    },
+    "experimental": {
+      "enableBetaFeatures": true,
+      "advancedWorkflow": true,
+      "aiAssistedFeedback": true,
+      "contextOptimization": false
+    }
+  },
+  "featureFlags": {
+    "systemPromptEnabled": {
+      "enabled": true,
+      "rolloutPercentage": 100,
+      "environments": ["development"]
+    },
+    "advancedWorkflow": {
+      "enabled": true,
+      "rolloutPercentage": 100,
+      "environments": ["development"]
+    },
+    "experimentalFeatures": {
+      "enabled": true,
+      "rolloutPercentage": 100,
+      "environments": ["development"]
+    }
+  }
+}

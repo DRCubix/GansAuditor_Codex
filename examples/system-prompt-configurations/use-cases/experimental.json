@@ -1,0 +1,293 @@
+{
+  "metadata": {
+    "name": "Experimental Features Configuration",
+    "description": "Configuration for testing new features and algorithms in development environments",
+    "environment": "development",
+    "version": "2.0.0",
+    "author": "Research Team",
+    "tags": ["experimental", "beta", "research", "development"],
+    "createdAt": "2024-01-15T10:30:00Z",
+    "updatedAt": "2024-01-15T10:30:00Z",
+    "reviewedBy": "Research Lead",
+    "approvedBy": "CTO",
+    "validatedWith": "system-prompt-validator-2.0.0"
+  },
+  "version": "2.0.0",
+  "systemPrompt": {
+    "identity": {
+      "name": "Kilo Code Experimental",
+      "role": "Research-Focused Adversarial Auditor",
+      "stance": "experimental-adversarial",
+      "authority": "spec-steering-and-research-guidelines"
+    },
+    "workflow": {
+      "steps": 12,
+      "enforceOrder": false,
+      "allowSkipping": true,
+      "evidenceRequired": false,
+      "experimentalSteps": true,
+      "customSteps": [
+        {
+          "name": "AI_ANALYSIS",
+          "position": "after:INIT",
+          "description": "AI-powered code analysis and pattern recognition",
+          "required": false,
+          "experimental": true
+        },
+        {
+          "name": "PREDICTIVE_QUALITY",
+          "position": "after:STATIC",
+          "description": "Predictive quality assessment using ML models",
+          "required": false,
+          "experimental": true
+        },
+        {
+          "name": "AUTOMATED_REFACTORING",
+          "position": "after:CONFORM",
+          "description": "Automated refactoring suggestions",
+          "required": false,
+          "experimental": true
+        },
+        {
+          "name": "SEMANTIC_ANALYSIS",
+          "position": "after:TRACE",
+          "description": "Deep semantic code analysis",
+          "required": false,
+          "experimental": true
+        }
+      ]
+    },
+    "qualityFramework": {
+      "dimensions": 8,
+      "weightingScheme": "experimental",
+      "scoringScale": "0-100",
+      "aggregationMethod": "ml-enhanced-weighted-average",
+      "weights": {
+        "correctnessCompleteness": 0.25,
+        "tests": 0.15,
+        "styleConventions": 0.10,
+        "security": 0.15,
+        "performance": 0.10,
+        "docsTraceability": 0.10,
+        "maintainability": 0.10,
+        "innovation": 0.05
+      },
+      "customDimensions": [
+        {
+          "name": "maintainability",
+          "weight": 0.10,
+          "criteria": [
+            "Code complexity metrics",
+            "Cyclomatic complexity",
+            "Coupling and cohesion",
+            "Technical debt indicators"
+          ],
+          "experimental": true
+        },
+        {
+          "name": "innovation",
+          "weight": 0.05,
+          "criteria": [
+            "Use of modern patterns",
+            "Adoption of best practices",
+            "Creative problem solving",
+            "Technology advancement"
+          ],
+          "experimental": true
+        }
+      ],
+      "experimentalFeatures": {
+        "mlAssistedScoring": true,
+        "semanticAnalysis": true,
+        "patternRecognition": true,
+        "predictiveQuality": true
+      }
+    },
+    "completionCriteria": {
+      "tiers": 4,
+      "killSwitches": 2,
+      "shipGates": 4,
+      "stagnationThreshold": 0.85,
+      "maxIterations": 50,
+      "experimentalCriteria": true,
+      "tierThresholds": {
+        "tier1": { "score": 95, "minLoops": 15, "confidence": 0.9 },
+        "tier2": { "score": 90, "minLoops": 20, "confidence": 0.8 },
+        "tier3": { "score": 85, "minLoops": 25, "confidence": 0.7 },
+        "tier4": { "score": 80, "minLoops": 30, "confidence": 0.6 }
+      },
+      "adaptiveCriteria": {
+        "enabled": true,
+        "learningRate": 0.1,
+        "adaptToProject": true,
+        "adaptToTeam": true
+      }
+    },
+    "integration": {
+      "sessionManagement": true,
+      "codexIntegration": true,
+      "contextAwareness": true,
+      "performanceOptimization": false,
+      "experimentalIntegrations": [
+        {
+          "name": "ml-quality-predictor",
+          "enabled": true,
+          "model": "quality-predictor-v3"
+        },
+        {
+          "name": "semantic-analyzer",
+          "enabled": true,
+          "engine": "semantic-analysis-v2"
+        },
+        {
+          "name": "pattern-recognizer",
+          "enabled": true,
+          "algorithm": "deep-pattern-recognition"
+        }
+      ]
+    },
+    "security": {
+      "sanitizePII": true,
+      "validateCommands": false,
+      "respectPermissions": false,
+      "flagVulnerabilities": true,
+      "commandValidationLevel": "minimal",
+      "auditTrail": true,
+      "encryptSessionData": false,
+      "experimentalSecurity": {
+        "aiThreatDetection": true,
+        "behavioralAnalysis": true,
+        "anomalyDetection": true
+      }
+    },
+    "performance": {
+      "contextTokenLimit": 500000,
+      "auditTimeoutMs": 120000,
+      "enableCaching": false,
+      "enableProgressTracking": true,
+      "maxConcurrentAudits": 1,
+      "memoryLimit": "2GB",
+      "experimentalOptimizations": {
+        "adaptiveContextPruning": true,
+        "intelligentCaching": true,
+        "predictivePreloading": true,
+        "dynamicResourceAllocation": true
+      }
+    },
+    "monitoring": {
+      "enabled": true,
+      "logLevel": "debug",
+      "metricsCollection": true,
+      "alerting": false,
+      "performanceTracking": true,
+      "healthChecks": true,
+      "dashboardEnabled": true,
+      "experimentalMonitoring": {
+        "mlAnomalyDetection": true,
+        "predictiveAlerting": true,
+        "behaviorAnalysis": true,
+        "qualityTrendPrediction": true
+      }
+    },
+    "experimental": {
+      "enableBetaFeatures": true,
+      "advancedWorkflow": true,
+      "aiAssistedFeedback": true,
+      "contextOptimization": true,
+      "machineLearning": {
+        "enabled": true,
+        "models": {
+          "qualityPredictor": "quality-predictor-v3",
+          "patternRecognizer": "pattern-recognizer-v2",
+          "semanticAnalyzer": "semantic-analyzer-v1"
+        },
+        "trainingData": "experimental-dataset",
+        "continuousLearning": true
+      },
+      "researchFeatures": {
+        "quantumInspiredOptimization": false,
+        "neuralArchitectureSearch": false,
+        "evolutionaryAlgorithms": true,
+        "reinforcementLearning": true
+      }
+    }
+  },
+  "featureFlags": {
+    "systemPromptEnabled": {
+      "enabled": true,
+      "rolloutPercentage": 100,
+      "environments": ["development"]
+    },
+    "experimentalFeatures": {
+      "enabled": true,
+      "rolloutPercentage": 100,
+      "environments": ["development"]
+    },
+    "mlAssistedAnalysis": {
+      "enabled": true,
+      "rolloutPercentage": 50,
+      "environments": ["development"],
+      "conditions": [
+        {
+          "type": "user",
+          "field": "role",
+          "operator": "in",
+          "value": ["researcher", "senior-developer"]
+        }
+      ]
+    },
+    "semanticAnalysis": {
+      "enabled": true,
+      "rolloutPercentage": 25,
+      "environments": ["development"]
+    },
+    "predictiveQuality": {
+      "enabled": true,
+      "rolloutPercentage": 10,
+      "environments": ["development"]
+    }
+  },
+  "experiments": [
+    {
+      "name": "adaptive-quality-thresholds",
+      "description": "Test adaptive quality thresholds based on project complexity",
+      "enabled": true,
+      "percentage": 50,
+      "metrics": ["quality_accuracy", "completion_time", "developer_satisfaction"]
+    },
+    {
+      "name": "ml-enhanced-feedback",
+      "description": "Test machine learning enhanced feedback generation",
+      "enabled": true,
+      "percentage": 25,
+      "metrics": ["feedback_quality", "issue_detection_rate", "false_positive_rate"]
+    },
+    {
+      "name": "semantic-code-understanding",
+      "description": "Test deep semantic understanding of code patterns",
+      "enabled": true,
+      "percentage": 10,
+      "metrics": ["pattern_recognition_accuracy", "semantic_analysis_depth"]
+    }
+  ],
+  "research": {
+    "dataCollection": {
+      "enabled": true,
+      "anonymized": true,
+      "consentRequired": true,
+      "retentionPeriod": "2years"
+    },
+    "metrics": {
+      "qualityPredictionAccuracy": true,
+      "patternRecognitionEffectiveness": true,
+      "semanticAnalysisDepth": true,
+      "learningConvergenceRate": true,
+      "adaptationEffectiveness": true
+    },
+    "collaboration": {
+      "academicPartners": ["University Research Lab"],
+      "industryPartners": ["AI Research Institute"],
+      "openSourceContributions": true
+    }
+  }
+}

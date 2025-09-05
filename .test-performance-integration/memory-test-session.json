@@ -1,0 +1,472 @@
+{
+  "id": "memory-test-session",
+  "config": {
+    "task": "Audit and improve the provided candidate",
+    "scope": "diff",
+    "threshold": 85,
+    "maxCycles": 1,
+    "candidates": 1,
+    "judges": [
+      "internal"
+    ],
+    "applyFixes": false
+  },
+  "history": [],
+  "iterations": [
+    {
+      "thoughtNumber": 6,
+      "code": "function test6() { return xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx; }",
+      "auditResult": {
+        "overall": 85,
+        "dimensions": [
+          {
+            "name": "accuracy",
+            "score": 90
+          },
+          {
+            "name": "completeness",
+            "score": 80
+          },
+          {
+            "name": "clarity",
+            "score": 85
+          },
+          {
+            "name": "actionability",
+            "score": 85
+          },
+          {
+            "name": "human_likeness",
+            "score": 85
+          }
+        ],
+        "verdict": "pass",
+        "review": {
+          "summary": "Good implementation with room for improvement",
+          "inline": [],
+          "citations": []
+        },
+        "proposed_diff": null,
+        "iterations": 1,
+        "judge_cards": [
+          {
+            "model": "test-judge",
+            "score": 85,
+            "notes": "Test review with detailed feedback"
+          }
+        ]
+      },
+      "timestamp": 1757095806344
+    },
+    {
+      "thoughtNumber": 7,
+      "code": "function test7() { return xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx; }",
+      "auditResult": {
+        "overall": 85,
+        "dimensions": [
+          {
+            "name": "accuracy",
+            "score": 90
+          },
+          {
+            "name": "completeness",
+            "score": 80
+          },
+          {
+            "name": "clarity",
+            "score": 85
+          },
+          {
+            "name": "actionability",
+            "score": 85
+          },
+          {
+            "name": "human_likeness",
+            "score": 85
+          }
+        ],
+        "verdict": "pass",
+        "review": {
+          "summary": "Good implementation with room for improvement",
+          "inline": [],
+          "citations": []
+        },
+        "proposed_diff": null,
+        "iterations": 1,
+        "judge_cards": [
+          {
+            "model": "test-judge",
+            "score": 85,
+            "notes": "Test review with detailed feedback"
+          }
+        ]
+      },
+      "timestamp": 1757095807345
+    },
+    {
+      "thoughtNumber": 8,
+      "code": "function test8() { return xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx; }",
+      "auditResult": {
+        "overall": 85,
+        "dimensions": [
+          {
+            "name": "accuracy",
+            "score": 90
+          },
+          {
+            "name": "completeness",
+            "score": 80
+          },
+          {
+            "name": "clarity",
+            "score": 85
+          },
+          {
+            "name": "actionability",
+            "score": 85
+          },
+          {
+            "name": "human_likeness",
+            "score": 85
+          }
+        ],
+        "verdict": "pass",
+        "review": {
+          "summary": "Good implementation with room for improvement",
+          "inline": [],
+          "citations": []
+        },
+        "proposed_diff": null,
+        "iterations": 1,
+        "judge_cards": [
+          {
+            "model": "test-judge",
+            "score": 85,
+            "notes": "Test review with detailed feedback"
+          }
+        ]
+      },
+      "timestamp": 1757095808345
+    },
+    {
+      "thoughtNumber": 9,
+      "code": "function test9() { return xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx; }",
+      "auditResult": {
+        "overall": 85,
+        "dimensions": [
+          {
+            "name": "accuracy",
+            "score": 90
+          },
+          {
+            "name": "completeness",
+            "score": 80
+          },
+          {
+            "name": "clarity",
+            "score": 85
+          },
+          {
+            "name": "actionability",
+            "score": 85
+          },
+          {
+            "name": "human_likeness",
+            "score": 85
+          }
+        ],
+        "verdict": "pass",
+        "review": {
+          "summary": "Good implementation with room for improvement",
+          "inline": [],
+          "citations": []
+        },
+        "proposed_diff": null,
+        "iterations": 1,
+        "judge_cards": [
+          {
+            "model": "test-judge",
+            "score": 85,
+            "notes": "Test review with detailed feedback"
+          }
+        ]
+      },
+      "timestamp": 1757095809346
+    },
+    {
+      "thoughtNumber": 10,
+      "code": "function test10() { return xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx; }",
+      "auditResult": {
+        "overall": 85,
+        "dimensions": [
+          {
+            "name": "accuracy",
+            "score": 90
+          },
+          {
+            "name": "completeness",
+            "score": 80
+          },
+          {
+            "name": "clarity",
+            "score": 85
+          },
+          {
+            "name": "actionability",
+            "score": 85
+          },
+          {
+            "name": "human_likeness",
+            "score": 85
+          }
+        ],
+        "verdict": "pass",
+        "review": {
+          "summary": "Good implementation with room for improvement",
+          "inline": [],
+          "citations": []
+        },
+        "proposed_diff": null,
+        "iterations": 1,
+        "judge_cards": [
+          {
+            "model": "test-judge",
+            "score": 85,
+            "notes": "Test review with detailed feedback"
+          }
+        ]
+      },
+      "timestamp": 1757095810347
+    },
+    {
+      "thoughtNumber": 11,
+      "code": "function test11() { return xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx; }",
+      "auditResult": {
+        "overall": 85,
+        "dimensions": [
+          {
+            "name": "accuracy",
+            "score": 90
+          },
+          {
+            "name": "completeness",
+            "score": 80
+          },
+          {
+            "name": "clarity",
+            "score": 85
+          },
+          {
+            "name": "actionability",
+            "score": 85
+          },
+          {
+            "name": "human_likeness",
+            "score": 85
+          }
+        ],
+        "verdict": "pass",
+        "review": {
+          "summary": "Good implementation with room for improvement",
+          "inline": [],
+          "citations": []
+        },
+        "proposed_diff": null,
+        "iterations": 1,
+        "judge_cards": [
+          {
+            "model": "test-judge",
+            "score": 85,
+            "notes": "Test review with detailed feedback"
+          }
+        ]
+      },
+      "timestamp": 1757095811348
+    },
+    {
+      "thoughtNumber": 12,
+      "code": "function test12() { return xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx; }",
+      "auditResult": {
+        "overall": 85,
+        "dimensions": [
+          {
+            "name": "accuracy",
+            "score": 90
+          },
+          {
+            "name": "completeness",
+            "score": 80
+          },
+          {
+            "name": "clarity",
+            "score": 85
+          },
+          {
+            "name": "actionability",
+            "score": 85
+          },
+          {
+            "name": "human_likeness",
+            "score": 85
+          }
+        ],
+        "verdict": "pass",
+        "review": {
+          "summary": "Good implementation with room for improvement",
+          "inline": [],
+          "citations": []
+        },
+        "proposed_diff": null,
+        "iterations": 1,
+        "judge_cards": [
+          {
+            "model": "test-judge",
+            "score": 85,
+            "notes": "Test review with detailed feedback"
+          }
+        ]
+      },
+      "timestamp": 1757095812349
+    },
+    {
+      "thoughtNumber": 13,
+      "code": "function test13() { return xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx; }",
+      "auditResult": {
+        "overall": 85,
+        "dimensions": [
+          {
+            "name": "accuracy",
+            "score": 90
+          },
+          {
+            "name": "completeness",
+            "score": 80
+          },
+          {
+            "name": "clarity",
+            "score": 85
+          },
+          {
+            "name": "actionability",
+            "score": 85
+          },
+          {
+            "name": "human_likeness",
+            "score": 85
+          }
+        ],
+        "verdict": "pass",
+        "review": {
+          "summary": "Good implementation with room for improvement",
+          "inline": [],
+          "citations": []
+        },
+        "proposed_diff": null,
+        "iterations": 1,
+        "judge_cards": [
+          {
+            "model": "test-judge",
+            "score": 85,
+            "notes": "Test review with detailed feedback"
+          }
+        ]
+      },
+      "timestamp": 1757095813349
+    },
+    {
+      "thoughtNumber": 14,
+      "code": "function test14() { return xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx; }",
+      "auditResult": {
+        "overall": 85,
+        "dimensions": [
+          {
+            "name": "accuracy",
+            "score": 90
+          },
+          {
+            "name": "completeness",
+            "score": 80
+          },
+          {
+            "name": "clarity",
+            "score": 85
+          },
+          {
+            "name": "actionability",
+            "score": 85
+          },
+          {
+            "name": "human_likeness",
+            "score": 85
+          }
+        ],
+        "verdict": "pass",
+        "review": {
+          "summary": "Good implementation with room for improvement",
+          "inline": [],
+          "citations": []
+        },
+        "proposed_diff": null,
+        "iterations": 1,
+        "judge_cards": [
+          {
+            "model": "test-judge",
+            "score": 85,
+            "notes": "Test review with detailed feedback"
+          }
+        ]
+      },
+      "timestamp": 1757095814350
+    },
+    {
+      "thoughtNumber": 15,
+      "code": "function test15() { return xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx; }",
+      "auditResult": {
+        "overall": 85,
+        "dimensions": [
+          {
+            "name": "accuracy",
+            "score": 90
+          },
+          {
+            "name": "completeness",
+            "score": 80
+          },
+          {
+            "name": "clarity",
+            "score": 85
+          },
+          {
+            "name": "actionability",
+            "score": 85
+          },
+          {
+            "name": "human_likeness",
+            "score": 85
+          }
+        ],
+        "verdict": "pass",
+        "review": {
+          "summary": "Good implementation with room for improvement",
+          "inline": [],
+          "citations": []
+        },
+        "proposed_diff": null,
+        "iterations": 1,
+        "judge_cards": [
+          {
+            "model": "test-judge",
+            "score": 85,
+            "notes": "Test review with detailed feedback"
+          }
+        ]
+      },
+      "timestamp": 1757095815351
+    }
+  ],
+  "currentLoop": 15,
+  "isComplete": false,
+  "codexContextActive": false,
+  "createdAt": 1757033771882,
+  "updatedAt": 1757095815351
+}

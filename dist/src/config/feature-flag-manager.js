@@ -1,0 +1,516 @@
+/**
+ * Feature Flag Manager for System Prompt Configuration
+ *
+ * This module provides feature flag support for gradual rollout,
+ * A/B testing, and environment-specific feature control.
+ *
+ * Requirements: 11.2 - Feature flag support for prompt system activation
+ */
+import { readFileSync, writeFileSync, existsSync } from 'fs';
+// ============================================================================
+// Default Feature Flags
+// ============================================================================
+/**
+ * Default system prompt feature flags
+ */
+export const DEFAULT_SYSTEM_PROMPT_FLAGS = {
+    systemPromptEnabled: {
+        name: 'systemPromptEnabled',
+        description: 'Enable system prompt functionality',
+        enabled: true,
+        rolloutPercentage: 100,
+        environments: ['development', 'staging', 'production'],
+        metadata: {
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+            tags: ['core', 'system-prompt'],
+        },
+    },
+    advancedWorkflow: {
+        name: 'advancedWorkflow',
+        description: 'Enable advanced 8-step audit workflow',
+        enabled: true,
+        rolloutPercentage: 100,
+        environments: ['development', 'staging', 'production'],
+        conditions: [
+            {
+                type: 'environment',
+                operator: 'in',
+                value: ['staging', 'production'],
+            },
+        ],
+        metadata: {
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+            tags: ['workflow', 'advanced'],
+        },
+    },
+    enhancedSecurity: {
+        name: 'enhancedSecurity',
+        description: 'Enable enhanced security features (PII sanitization, command validation)',
+        enabled: true,
+        rolloutPercentage: 100,
+        environments: ['staging', 'production'],
+        conditions: [
+            {
+                type: 'environment',
+                operator: 'not_equals',
+                value: 'development',
+            },
+        ],
+        metadata: {
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+            tags: ['security', 'production'],
+        },
+    },
+    performanceOptimizations: {
+        name: 'performanceOptimizations',
+        description: 'Enable performance optimizations (caching, context optimization)',
+        enabled: true,
+        rolloutPercentage: 100,
+        environments: ['development', 'staging', 'production'],
+        metadata: {
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+            tags: ['performance', 'optimization'],
+        },
+    },
+    experimentalFeatures: {
+        name: 'experimentalFeatures',
+        description: 'Enable experimental features and new algorithms',
+        enabled: false,
+        rolloutPercentage: 10,
+        environments: ['development'],
+        conditions: [
+            {
+                type: 'environment',
+                operator: 'equals',
+                value: 'development',
+            },
+        ],
+        metadata: {
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+            tags: ['experimental', 'beta'],
+        },
+    },
+    gradualRollout: {
+        name: 'gradualRollout',
+        description: 'Gradual rollout of system prompt to percentage of sessions',
+        enabled: true,
+        rolloutPercentage: 50,
+        environments: ['production'],
+        conditions: [
+            {
+                type: 'environment',
+                operator: 'equals',
+                value: 'production',
+            },
+        ],
+        metadata: {
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+            tags: ['rollout', 'production'],
+        },
+    },
+    debugMode: {
+        name: 'debugMode',
+        description: 'Enable debug logging and verbose output',
+        enabled: false,
+        rolloutPercentage: 100,
+        environments: ['development'],
+        conditions: [
+            {
+                type: 'environment',
+                operator: 'equals',
+                value: 'development',
+            },
+        ],
+        metadata: {
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+            tags: ['debug', 'development'],
+        },
+    },
+    metricsCollection: {
+        name: 'metricsCollection',
+        description: 'Enable metrics collection and performance monitoring',
+        enabled: true,
+        rolloutPercentage: 100,
+        environments: ['staging', 'production'],
+        metadata: {
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+            tags: ['metrics', 'monitoring'],
+        },
+    },
+};
+// ============================================================================
+// Feature Flag Manager Class
+// ============================================================================
+export class FeatureFlagManager {
+    flags;
+    configPath;
+    evaluationCache;
+    cacheTimeout;
+    constructor(flags = DEFAULT_SYSTEM_PROMPT_FLAGS, configPath, cacheTimeout = 60000 // 1 minute
+    ) {
+        this.flags = flags;
+        this.configPath = configPath;
+        this.evaluationCache = new Map();
+        this.cacheTimeout = cacheTimeout;
+    }
+    /**
+     * Evaluate feature flag for given context
+     */
+    evaluate(flagName, context = {}) {
+        const cacheKey = this.getCacheKey(flagName, context);
+        // Check cache first
+        const cached = this.evaluationCache.get(cacheKey);
+        if (cached && Date.now() - cached.timestamp < this.cacheTimeout) {
+            return cached.result;
+        }
+        const flag = this.flags[flagName];
+        if (!flag) {
+            const result = {
+                enabled: false,
+                reason: 'Flag not found',
+                rolloutPercentage: 0,
+                matchedConditions: [],
+            };
+            this.evaluationCache.set(cacheKey, { result, timestamp: Date.now() });
+            return result;
+        }
+        // Check if flag is globally disabled
+        if (!flag.enabled) {
+            const result = {
+                enabled: false,
+                reason: 'Flag globally disabled',
+                rolloutPercentage: flag.rolloutPercentage,
+                matchedConditions: [],
+            };
+            this.evaluationCache.set(cacheKey, { result, timestamp: Date.now() });
+            return result;
+        }
+        // Check environment restrictions
+        if (context.environment && flag.environments.length > 0) {
+            if (!flag.environments.includes(context.environment)) {
+                const result = {
+                    enabled: false,
+                    reason: `Environment '${context.environment}' not in allowed environments`,
+                    rolloutPercentage: flag.rolloutPercentage,
+                    matchedConditions: [],
+                };
+                this.evaluationCache.set(cacheKey, { result, timestamp: Date.now() });
+                return result;
+            }
+        }
+        // Evaluate conditions
+        const matchedConditions = [];
+        if (flag.conditions) {
+            for (const condition of flag.conditions) {
+                if (this.evaluateCondition(condition, context)) {
+                    matchedConditions.push(`${condition.type}:${condition.operator}:${condition.value}`);
+                }
+                else {
+                    const result = {
+                        enabled: false,
+                        reason: `Condition not met: ${condition.type} ${condition.operator} ${condition.value}`,
+                        rolloutPercentage: flag.rolloutPercentage,
+                        matchedConditions,
+                    };
+                    this.evaluationCache.set(cacheKey, { result, timestamp: Date.now() });
+                    return result;
+                }
+            }
+        }
+        // Check rollout percentage
+        const rolloutEnabled = this.checkRolloutPercentage(flag.rolloutPercentage, context);
+        const result = {
+            enabled: rolloutEnabled,
+            reason: rolloutEnabled ? 'All conditions met' : 'Outside rollout percentage',
+            rolloutPercentage: flag.rolloutPercentage,
+            matchedConditions,
+        };
+        this.evaluationCache.set(cacheKey, { result, timestamp: Date.now() });
+        return result;
+    }
+    /**
+     * Check if feature is enabled (simple boolean check)
+     */
+    isEnabled(flagName, context = {}) {
+        return this.evaluate(flagName, context).enabled;
+    }
+    /**
+     * Get all flags
+     */
+    getAllFlags() {
+        return { ...this.flags };
+    }
+    /**
+     * Get flag by name
+     */
+    getFlag(flagName) {
+        return this.flags[flagName];
+    }
+    /**
+     * Update flag
+     */
+    updateFlag(flagName, updates) {
+        if (this.flags[flagName]) {
+            this.flags[flagName] = {
+                ...this.flags[flagName],
+                ...updates,
+                metadata: {
+                    ...this.flags[flagName].metadata,
+                    updatedAt: new Date().toISOString(),
+                },
+            };
+            this.clearCache();
+        }
+    }
+    /**
+     * Add new flag
+     */
+    addFlag(flag) {
+        this.flags[flag.name] = {
+            ...flag,
+            metadata: {
+                ...flag.metadata,
+                createdAt: flag.metadata?.createdAt || new Date().toISOString(),
+                updatedAt: new Date().toISOString(),
+            },
+        };
+        this.clearCache();
+    }
+    /**
+     * Remove flag
+     */
+    removeFlag(flagName) {
+        delete this.flags[flagName];
+        this.clearCache();
+    }
+    /**
+     * Load flags from configuration file
+     */
+    loadFromFile(filePath) {
+        try {
+            if (!existsSync(filePath)) {
+                return {
+                    success: false,
+                    error: 'Configuration file not found',
+                    flagsLoaded: 0,
+                };
+            }
+            const content = readFileSync(filePath, 'utf-8');
+            const config = JSON.parse(content);
+            this.flags = config.flags;
+            this.configPath = filePath;
+            this.clearCache();
+            return {
+                success: true,
+                flagsLoaded: Object.keys(config.flags).length,
+            };
+        }
+        catch (error) {
+            return {
+                success: false,
+                error: error instanceof Error ? error.message : 'Unknown error',
+                flagsLoaded: 0,
+            };
+        }
+    }
+    /**
+     * Save flags to configuration file
+     */
+    saveToFile(filePath) {
+        const targetPath = filePath || this.configPath;
+        if (!targetPath) {
+            return {
+                success: false,
+                error: 'No file path specified',
+                flagsSaved: 0,
+            };
+        }
+        try {
+            const config = {
+                version: '1.0.0',
+                flags: this.flags,
+                globalSettings: {
+                    defaultRolloutPercentage: 100,
+                    enabledEnvironments: ['development', 'staging', 'production'],
+                    evaluationLogging: false,
+                },
+                metadata: {
+                    createdAt: new Date().toISOString(),
+                    updatedAt: new Date().toISOString(),
+                    description: 'System prompt feature flags configuration',
+                },
+            };
+            writeFileSync(targetPath, JSON.stringify(config, null, 2), 'utf-8');
+            this.configPath = targetPath;
+            return {
+                success: true,
+                flagsSaved: Object.keys(this.flags).length,
+            };
+        }
+        catch (error) {
+            return {
+                success: false,
+                error: error instanceof Error ? error.message : 'Unknown error',
+                flagsSaved: 0,
+            };
+        }
+    }
+    /**
+     * Get flags for specific environment
+     */
+    getFlagsForEnvironment(environment) {
+        const context = { environment };
+        const results = {};
+        for (const flagName of Object.keys(this.flags)) {
+            results[flagName] = this.evaluate(flagName, context);
+        }
+        return results;
+    }
+    /**
+     * Get rollout status summary
+     */
+    getRolloutSummary() {
+        const totalFlags = Object.keys(this.flags).length;
+        const enabledFlags = Object.values(this.flags).filter(f => f.enabled).length;
+        const flagsByEnvironment = {};
+        const environments = ['development', 'staging', 'production'];
+        for (const env of environments) {
+            const envResults = this.getFlagsForEnvironment(env);
+            flagsByEnvironment[env] = Object.values(envResults).filter(r => r.enabled).length;
+        }
+        const averageRolloutPercentage = totalFlags > 0
+            ? Object.values(this.flags).reduce((sum, flag) => sum + flag.rolloutPercentage, 0) / totalFlags
+            : 0;
+        return {
+            totalFlags,
+            enabledFlags,
+            flagsByEnvironment,
+            averageRolloutPercentage,
+        };
+    }
+    /**
+     * Clear evaluation cache
+     */
+    clearCache() {
+        this.evaluationCache.clear();
+    }
+    /**
+     * Evaluate individual condition
+     */
+    evaluateCondition(condition, context) {
+        let contextValue;
+        switch (condition.type) {
+            case 'environment':
+                contextValue = context.environment;
+                break;
+            case 'user':
+                contextValue = context.userId;
+                break;
+            case 'session':
+                contextValue = context.sessionId;
+                break;
+            case 'time':
+                contextValue = context.timestamp || Date.now();
+                break;
+            case 'custom':
+                contextValue = condition.field ? context.customProperties?.[condition.field] : context.customProperties;
+                break;
+            default:
+                return false;
+        }
+        switch (condition.operator) {
+            case 'equals':
+                return contextValue === condition.value;
+            case 'not_equals':
+                return contextValue !== condition.value;
+            case 'in':
+                return Array.isArray(condition.value) && condition.value.includes(contextValue);
+            case 'not_in':
+                return Array.isArray(condition.value) && !condition.value.includes(contextValue);
+            case 'greater_than':
+                return typeof contextValue === 'number' && contextValue > condition.value;
+            case 'less_than':
+                return typeof contextValue === 'number' && contextValue < condition.value;
+            case 'matches':
+                return typeof contextValue === 'string' && new RegExp(condition.value).test(contextValue);
+            default:
+                return false;
+        }
+    }
+    /**
+     * Check rollout percentage using deterministic hash
+     */
+    checkRolloutPercentage(percentage, context) {
+        if (percentage >= 100)
+            return true;
+        if (percentage <= 0)
+            return false;
+        // Use session ID or user ID for consistent rollout
+        const identifier = context.sessionId || context.userId || 'anonymous';
+        // Simple hash function for deterministic percentage
+        let hash = 0;
+        for (let i = 0; i < identifier.length; i++) {
+            const char = identifier.charCodeAt(i);
+            hash = ((hash << 5) - hash) + char;
+            hash = hash & hash; // Convert to 32-bit integer
+        }
+        const normalizedHash = Math.abs(hash) % 100;
+        return normalizedHash < percentage;
+    }
+    /**
+     * Generate cache key for evaluation result
+     */
+    getCacheKey(flagName, context) {
+        const contextStr = JSON.stringify({
+            environment: context.environment,
+            userId: context.userId,
+            sessionId: context.sessionId,
+            // Don't include timestamp in cache key as it changes constantly
+        });
+        return `${flagName}:${contextStr}`;
+    }
+}
+// ============================================================================
+// Utility Functions
+// ============================================================================
+/**
+ * Create default feature flag manager
+ */
+export function createFeatureFlagManager(configPath) {
+    const manager = new FeatureFlagManager(DEFAULT_SYSTEM_PROMPT_FLAGS, configPath);
+    // Load from file if it exists
+    if (configPath && existsSync(configPath)) {
+        manager.loadFromFile(configPath);
+    }
+    return manager;
+}
+/**
+ * Quick feature flag check
+ */
+export function isFeatureEnabled(flagName, context = {}, configPath) {
+    const manager = createFeatureFlagManager(configPath);
+    return manager.isEnabled(flagName, context);
+}
+/**
+ * Get environment-specific feature flags from environment variables
+ */
+export function getFeatureFlagsFromEnv() {
+    return {
+        systemPromptEnabled: process.env.GAN_AUDITOR_PROMPT_ENABLED === 'true',
+        advancedWorkflow: process.env.GAN_AUDITOR_ADVANCED_WORKFLOW !== 'false',
+        enhancedSecurity: process.env.GAN_AUDITOR_ENHANCED_SECURITY !== 'false',
+        performanceOptimizations: process.env.GAN_AUDITOR_PERFORMANCE_OPTIMIZATIONS !== 'false',
+        experimentalFeatures: process.env.GAN_AUDITOR_EXPERIMENTAL_FEATURES === 'true',
+        debugMode: process.env.GAN_AUDITOR_DEBUG_MODE === 'true',
+        metricsCollection: process.env.GAN_AUDITOR_METRICS_COLLECTION !== 'false',
+    };
+}
+//# sourceMappingURL=feature-flag-manager.js.map

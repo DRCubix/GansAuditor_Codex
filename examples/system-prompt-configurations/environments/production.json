@@ -1,0 +1,164 @@
+{
+  "metadata": {
+    "name": "Production Environment Configuration",
+    "description": "Secure, optimized configuration for production deployment with comprehensive monitoring",
+    "environment": "production",
+    "version": "2.0.0",
+    "author": "Platform Team",
+    "tags": ["production", "security", "performance", "monitoring"],
+    "createdAt": "2024-01-15T10:30:00Z",
+    "updatedAt": "2024-01-15T10:30:00Z",
+    "reviewedBy": "Security Team",
+    "approvedBy": "Platform Lead",
+    "validatedWith": "system-prompt-validator-2.0.0"
+  },
+  "version": "2.0.0",
+  "systemPrompt": {
+    "identity": {
+      "name": "Kilo Code",
+      "role": "Adversarial Auditor",
+      "stance": "constructive-adversarial",
+      "authority": "spec-and-steering-ground-truth"
+    },
+    "workflow": {
+      "steps": 8,
+      "enforceOrder": true,
+      "allowSkipping": false,
+      "evidenceRequired": true,
+      "customSteps": [
+        {
+          "name": "SECURITY_SCAN",
+          "position": "after:DYNAMIC",
+          "description": "Additional security vulnerability scanning",
+          "required": true
+        }
+      ]
+    },
+    "qualityFramework": {
+      "dimensions": 6,
+      "weightingScheme": "production-standard",
+      "scoringScale": "0-100",
+      "aggregationMethod": "weighted-average",
+      "weights": {
+        "correctnessCompleteness": 0.30,
+        "tests": 0.20,
+        "styleConventions": 0.15,
+        "security": 0.15,
+        "performance": 0.10,
+        "docsTraceability": 0.10
+      }
+    },
+    "completionCriteria": {
+      "tiers": 3,
+      "killSwitches": 3,
+      "shipGates": 5,
+      "stagnationThreshold": 0.95,
+      "maxIterations": 25,
+      "tierThresholds": {
+        "tier1": { "score": 95, "minLoops": 10 },
+        "tier2": { "score": 90, "minLoops": 15 },
+        "tier3": { "score": 85, "minLoops": 20 }
+      }
+    },
+    "integration": {
+      "sessionManagement": true,
+      "codexIntegration": true,
+      "contextAwareness": true,
+      "performanceOptimization": true
+    },
+    "security": {
+      "sanitizePII": true,
+      "validateCommands": true,
+      "respectPermissions": true,
+      "flagVulnerabilities": true,
+      "commandValidationLevel": "strict",
+      "auditTrail": true,
+      "encryptSessionData": true
+    },
+    "performance": {
+      "contextTokenLimit": 200000,
+      "auditTimeoutMs": 30000,
+      "enableCaching": true,
+      "enableProgressTracking": true,
+      "maxConcurrentAudits": 3,
+      "memoryLimit": "512MB",
+      "cacheTimeout": 300000,
+      "compressionEnabled": true
+    },
+    "monitoring": {
+      "enabled": true,
+      "logLevel": "info",
+      "metricsCollection": true,
+      "alerting": true,
+      "performanceTracking": true,
+      "healthChecks": true,
+      "dashboardEnabled": true
+    },
+    "experimental": {
+      "enableBetaFeatures": false,
+      "advancedWorkflow": false,
+      "aiAssistedFeedback": false,
+      "contextOptimization": true
+    }
+  },
+  "featureFlags": {
+    "systemPromptEnabled": {
+      "enabled": true,
+      "rolloutPercentage": 100,
+      "environments": ["production"]
+    },
+    "advancedWorkflow": {
+      "enabled": false,
+      "rolloutPercentage": 0,
+      "environments": ["production"]
+    },
+    "securityEnhancements": {
+      "enabled": true,
+      "rolloutPercentage": 100,
+      "environments": ["production"]
+    },
+    "performanceOptimizations": {
+      "enabled": true,
+      "rolloutPercentage": 100,
+      "environments": ["production"]
+    }
+  },
+  "alerts": [
+    {
+      "id": "config-validation-errors",
+      "enabled": true,
+      "condition": {
+        "metric": "configValidationErrors",
+        "operator": "gt",
+        "threshold": 5,
+        "windowMs": 300000
+      },
+      "severity": "error",
+      "cooldownMs": 600000
+    },
+    {
+      "id": "audit-failure-rate",
+      "enabled": true,
+      "condition": {
+        "metric": "auditFailureRate",
+        "operator": "gt",
+        "threshold": 0.05,
+        "windowMs": 900000
+      },
+      "severity": "warning",
+      "cooldownMs": 1800000
+    },
+    {
+      "id": "performance-degradation",
+      "enabled": true,
+      "condition": {
+        "metric": "auditCompletionTime",
+        "operator": "gt",
+        "threshold": 45000,
+        "windowMs": 600000
+      },
+      "severity": "warning",
+      "cooldownMs": 900000
+    }
+  ]
+}

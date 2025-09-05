@@ -1,0 +1,21 @@
+{
+  "id": "cleanup-session-9",
+  "config": {
+    "task": "Audit and improve the provided candidate",
+    "scope": "diff",
+    "threshold": 85,
+    "maxCycles": 1,
+    "candidates": 1,
+    "judges": [
+      "internal"
+    ],
+    "applyFixes": false
+  },
+  "history": [],
+  "createdAt": 1757095814778,
+  "updatedAt": 1757095814778,
+  "iterations": [],
+  "currentLoop": 0,
+  "isComplete": false,
+  "codexContextActive": false
+}

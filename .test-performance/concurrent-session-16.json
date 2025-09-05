@@ -1,0 +1,23 @@
+{
+  "id": "concurrent-session-16",
+  "config": {
+    "task": "Audit and improve the provided candidate",
+    "scope": "diff",
+    "threshold": 85,
+    "maxCycles": 1,
+    "candidates": 1,
+    "judges": [
+      "internal"
+    ],
+    "applyFixes": false,
+    "auditTimeout": 5000,
+    "enableSystemPrompt": true
+  },
+  "history": [],
+  "createdAt": 1757095814733,
+  "updatedAt": 1757095814734,
+  "iterations": [],
+  "currentLoop": 0,
+  "isComplete": false,
+  "codexContextActive": false
+}

@@ -1,0 +1,240 @@
+{
+  "metadata": {
+    "name": "Performance Optimized Configuration",
+    "description": "High-throughput configuration optimized for speed and efficiency in high-volume environments",
+    "environment": "production",
+    "version": "2.0.0",
+    "author": "Performance Team",
+    "tags": ["performance", "throughput", "optimization", "speed"],
+    "createdAt": "2024-01-15T10:30:00Z",
+    "updatedAt": "2024-01-15T10:30:00Z",
+    "reviewedBy": "Platform Team",
+    "approvedBy": "Performance Lead",
+    "validatedWith": "system-prompt-validator-2.0.0"
+  },
+  "version": "2.0.0",
+  "systemPrompt": {
+    "identity": {
+      "name": "Kilo Code Turbo",
+      "role": "Performance-Focused Adversarial Auditor",
+      "stance": "efficiency-driven-adversarial",
+      "authority": "spec-and-steering-ground-truth"
+    },
+    "workflow": {
+      "steps": 6,
+      "enforceOrder": false,
+      "allowSkipping": true,
+      "evidenceRequired": false,
+      "parallelExecution": true,
+      "customSteps": [],
+      "optimizedSteps": [
+        "INIT",
+        "STATIC",
+        "TESTS",
+        "DYNAMIC",
+        "TRACE",
+        "VERDICT"
+      ]
+    },
+    "qualityFramework": {
+      "dimensions": 4,
+      "weightingScheme": "performance-focused",
+      "scoringScale": "0-100",
+      "aggregationMethod": "weighted-average",
+      "weights": {
+        "correctnessCompleteness": 0.40,
+        "tests": 0.30,
+        "performance": 0.20,
+        "styleConventions": 0.10
+      },
+      "fastMode": true,
+      "skipNonCritical": true
+    },
+    "completionCriteria": {
+      "tiers": 2,
+      "killSwitches": 2,
+      "shipGates": 3,
+      "stagnationThreshold": 0.90,
+      "maxIterations": 15,
+      "tierThresholds": {
+        "tier1": { "score": 85, "minLoops": 3 },
+        "tier2": { "score": 75, "minLoops": 5 }
+      },
+      "fastCompletion": true,
+      "earlyTermination": true
+    },
+    "integration": {
+      "sessionManagement": true,
+      "codexIntegration": true,
+      "contextAwareness": false,
+      "performanceOptimization": true,
+      "lightweightMode": true
+    },
+    "security": {
+      "sanitizePII": true,
+      "validateCommands": false,
+      "respectPermissions": true,
+      "flagVulnerabilities": false,
+      "commandValidationLevel": "minimal",
+      "auditTrail": false,
+      "encryptSessionData": false,
+      "lightweightSecurity": true
+    },
+    "performance": {
+      "contextTokenLimit": 100000,
+      "auditTimeoutMs": 15000,
+      "enableCaching": true,
+      "enableProgressTracking": false,
+      "maxConcurrentAudits": 10,
+      "memoryLimit": "256MB",
+      "cacheTimeout": 600000,
+      "compressionEnabled": true,
+      "resourceMonitoring": false,
+      "aggressiveCaching": true,
+      "parallelProcessing": true,
+      "streamingMode": true,
+      "batchProcessing": true,
+      "connectionPooling": true,
+      "preloadOptimizations": true
+    },
+    "monitoring": {
+      "enabled": true,
+      "logLevel": "warn",
+      "metricsCollection": true,
+      "alerting": true,
+      "performanceTracking": true,
+      "healthChecks": false,
+      "dashboardEnabled": false,
+      "lightweightMonitoring": true,
+      "samplingRate": 0.1
+    },
+    "experimental": {
+      "enableBetaFeatures": true,
+      "advancedWorkflow": false,
+      "aiAssistedFeedback": false,
+      "contextOptimization": true,
+      "performanceExperiments": true
+    },
+    "optimizations": {
+      "contextPruning": {
+        "enabled": true,
+        "aggressiveness": "high",
+        "relevanceThreshold": 0.8
+      },
+      "responseCompression": {
+        "enabled": true,
+        "algorithm": "gzip",
+        "level": 6
+      },
+      "memoryManagement": {
+        "garbageCollection": "aggressive",
+        "memoryPooling": true,
+        "objectReuse": true
+      },
+      "networkOptimization": {
+        "connectionReuse": true,
+        "requestBatching": true,
+        "responseStreaming": true
+      }
+    }
+  },
+  "featureFlags": {
+    "systemPromptEnabled": {
+      "enabled": true,
+      "rolloutPercentage": 100,
+      "environments": ["production"]
+    },
+    "performanceOptimizations": {
+      "enabled": true,
+      "rolloutPercentage": 100,
+      "environments": ["production"]
+    },
+    "parallelProcessing": {
+      "enabled": true,
+      "rolloutPercentage": 100,
+      "environments": ["production"]
+    },
+    "aggressiveCaching": {
+      "enabled": true,
+      "rolloutPercentage": 100,
+      "environments": ["production"]
+    },
+    "streamingMode": {
+      "enabled": true,
+      "rolloutPercentage": 75,
+      "environments": ["production"]
+    }
+  },
+  "alerts": [
+    {
+      "id": "performance-degradation",
+      "enabled": true,
+      "condition": {
+        "metric": "auditCompletionTime",
+        "operator": "gt",
+        "threshold": 20000,
+        "windowMs": 300000
+      },
+      "severity": "warning",
+      "cooldownMs": 600000
+    },
+    {
+      "id": "throughput-drop",
+      "enabled": true,
+      "condition": {
+        "metric": "auditsPerMinute",
+        "operator": "lt",
+        "threshold": 10,
+        "windowMs": 600000
+      },
+      "severity": "warning",
+      "cooldownMs": 900000
+    },
+    {
+      "id": "memory-usage-high",
+      "enabled": true,
+      "condition": {
+        "metric": "memoryUsage",
+        "operator": "gt",
+        "threshold": 0.8,
+        "windowMs": 300000
+      },
+      "severity": "error",
+      "cooldownMs": 300000
+    },
+    {
+      "id": "cache-miss-rate-high",
+      "enabled": true,
+      "condition": {
+        "metric": "cacheMissRate",
+        "operator": "gt",
+        "threshold": 0.3,
+        "windowMs": 900000
+      },
+      "severity": "info",
+      "cooldownMs": 1800000
+    }
+  ],
+  "performanceTargets": {
+    "auditCompletionTime": {
+      "target": 15000,
+      "maximum": 25000,
+      "unit": "milliseconds"
+    },
+    "throughput": {
+      "target": 20,
+      "minimum": 10,
+      "unit": "audits_per_minute"
+    },
+    "memoryUsage": {
+      "target": 0.6,
+      "maximum": 0.8,
+      "unit": "percentage"
+    },
+    "cacheHitRate": {
+      "target": 0.8,
+      "minimum": 0.6,
+      "unit": "percentage"
+    }
+  }
+}

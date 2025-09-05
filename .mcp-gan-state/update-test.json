@@ -1,0 +1,38 @@
+{
+  "id": "update-test",
+  "config": {
+    "task": "test",
+    "scope": "diff",
+    "threshold": 85,
+    "maxCycles": 1,
+    "candidates": 1,
+    "judges": [
+      "internal"
+    ],
+    "applyFixes": false
+  },
+  "history": [
+    {
+      "thoughtNumber": 1,
+      "timestamp": "2025-09-05T18:10:16.605Z",
+      "ganReview": {
+        "overall": 85,
+        "dimensions": [],
+        "verdict": "pass",
+        "review": {
+          "summary": "Test",
+          "inline": [],
+          "citations": []
+        },
+        "iterations": 1,
+        "judge_cards": []
+      }
+    }
+  ],
+  "createdAt": 1757095816605,
+  "updatedAt": 1757095816605,
+  "iterations": [],
+  "currentLoop": 0,
+  "isComplete": false,
+  "codexContextActive": false
+}

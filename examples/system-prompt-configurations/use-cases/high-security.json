@@ -1,0 +1,245 @@
+{
+  "metadata": {
+    "name": "High Security Configuration",
+    "description": "Maximum security settings for environments with strict compliance requirements (financial, healthcare, government)",
+    "environment": "production",
+    "version": "2.0.0",
+    "author": "Security Team",
+    "tags": ["security", "compliance", "audit", "strict"],
+    "createdAt": "2024-01-15T10:30:00Z",
+    "updatedAt": "2024-01-15T10:30:00Z",
+    "reviewedBy": "Compliance Team",
+    "approvedBy": "CISO",
+    "complianceFrameworks": ["SOC2", "ISO27001", "GDPR", "HIPAA"],
+    "validatedWith": "system-prompt-validator-2.0.0"
+  },
+  "version": "2.0.0",
+  "systemPrompt": {
+    "identity": {
+      "name": "Kilo Code Security",
+      "role": "Security-Focused Adversarial Auditor",
+      "stance": "security-first-adversarial",
+      "authority": "spec-steering-and-security-policies"
+    },
+    "workflow": {
+      "steps": 10,
+      "enforceOrder": true,
+      "allowSkipping": false,
+      "evidenceRequired": true,
+      "customSteps": [
+        {
+          "name": "SECURITY_SCAN",
+          "position": "after:DYNAMIC",
+          "description": "Comprehensive security vulnerability scanning",
+          "required": true
+        },
+        {
+          "name": "COMPLIANCE_CHECK",
+          "position": "after:SECURITY_SCAN",
+          "description": "Compliance framework validation",
+          "required": true
+        }
+      ]
+    },
+    "qualityFramework": {
+      "dimensions": 7,
+      "weightingScheme": "security-focused",
+      "scoringScale": "0-100",
+      "aggregationMethod": "weighted-average",
+      "weights": {
+        "correctnessCompleteness": 0.25,
+        "tests": 0.15,
+        "styleConventions": 0.10,
+        "security": 0.30,
+        "performance": 0.05,
+        "docsTraceability": 0.10,
+        "compliance": 0.05
+      },
+      "customDimensions": [
+        {
+          "name": "compliance",
+          "weight": 0.05,
+          "criteria": [
+            "SOC 2 Type II compliance",
+            "GDPR data protection requirements",
+            "HIPAA security safeguards",
+            "ISO 27001 security controls"
+          ]
+        }
+      ]
+    },
+    "completionCriteria": {
+      "tiers": 2,
+      "killSwitches": 4,
+      "shipGates": 7,
+      "stagnationThreshold": 0.98,
+      "maxIterations": 30,
+      "tierThresholds": {
+        "tier1": { "score": 98, "minLoops": 15, "securityScore": 95 },
+        "tier2": { "score": 95, "minLoops": 20, "securityScore": 90 }
+      },
+      "customKillSwitches": [
+        {
+          "name": "critical-security-failure",
+          "condition": "criticalSecurityIssues > 0 && loops >= 5",
+          "action": "terminate",
+          "escalate": true
+        }
+      ]
+    },
+    "integration": {
+      "sessionManagement": true,
+      "codexIntegration": true,
+      "contextAwareness": true,
+      "performanceOptimization": true,
+      "securityIntegration": true
+    },
+    "security": {
+      "sanitizePII": true,
+      "validateCommands": true,
+      "respectPermissions": true,
+      "flagVulnerabilities": true,
+      "commandValidationLevel": "maximum",
+      "auditTrail": true,
+      "encryptSessionData": true,
+      "dataRetentionPolicy": "7years",
+      "accessLogging": true,
+      "integrityChecking": true,
+      "secretDetection": true,
+      "dependencyScanning": true,
+      "codeSigningValidation": true
+    },
+    "performance": {
+      "contextTokenLimit": 150000,
+      "auditTimeoutMs": 45000,
+      "enableCaching": true,
+      "enableProgressTracking": true,
+      "maxConcurrentAudits": 2,
+      "memoryLimit": "256MB",
+      "cacheTimeout": 180000,
+      "compressionEnabled": true,
+      "resourceMonitoring": true
+    },
+    "monitoring": {
+      "enabled": true,
+      "logLevel": "info",
+      "metricsCollection": true,
+      "alerting": true,
+      "performanceTracking": true,
+      "healthChecks": true,
+      "dashboardEnabled": true,
+      "securityMonitoring": true,
+      "complianceReporting": true,
+      "incidentTracking": true
+    },
+    "experimental": {
+      "enableBetaFeatures": false,
+      "advancedWorkflow": false,
+      "aiAssistedFeedback": false,
+      "contextOptimization": false
+    },
+    "compliance": {
+      "frameworks": ["SOC2", "ISO27001", "GDPR", "HIPAA"],
+      "auditTrailRetention": "7years",
+      "dataClassification": "confidential",
+      "encryptionRequired": true,
+      "accessControlRequired": true,
+      "incidentResponseRequired": true
+    }
+  },
+  "featureFlags": {
+    "systemPromptEnabled": {
+      "enabled": true,
+      "rolloutPercentage": 100,
+      "environments": ["production"]
+    },
+    "securityEnhancements": {
+      "enabled": true,
+      "rolloutPercentage": 100,
+      "environments": ["production"]
+    },
+    "complianceFeatures": {
+      "enabled": true,
+      "rolloutPercentage": 100,
+      "environments": ["production"]
+    },
+    "advancedSecurityScanning": {
+      "enabled": true,
+      "rolloutPercentage": 100,
+      "environments": ["production"]
+    }
+  },
+  "alerts": [
+    {
+      "id": "critical-security-issue",
+      "enabled": true,
+      "condition": {
+        "metric": "criticalSecurityIssues",
+        "operator": "gt",
+        "threshold": 0,
+        "windowMs": 60000
+      },
+      "severity": "critical",
+      "cooldownMs": 0,
+      "escalation": "immediate"
+    },
+    {
+      "id": "compliance-violation",
+      "enabled": true,
+      "condition": {
+        "metric": "complianceViolations",
+        "operator": "gt",
+        "threshold": 0,
+        "windowMs": 300000
+      },
+      "severity": "error",
+      "cooldownMs": 300000,
+      "escalation": "15m"
+    },
+    {
+      "id": "security-scan-failure",
+      "enabled": true,
+      "condition": {
+        "metric": "securityScanFailures",
+        "operator": "gt",
+        "threshold": 2,
+        "windowMs": 600000
+      },
+      "severity": "warning",
+      "cooldownMs": 600000
+    },
+    {
+      "id": "unauthorized-access-attempt",
+      "enabled": true,
+      "condition": {
+        "metric": "unauthorizedAccessAttempts",
+        "operator": "gt",
+        "threshold": 3,
+        "windowMs": 300000
+      },
+      "severity": "error",
+      "cooldownMs": 300000,
+      "escalation": "immediate"
+    }
+  ],
+  "securityPolicies": {
+    "dataHandling": {
+      "piiDetection": "mandatory",
+      "dataClassification": "automatic",
+      "encryptionAtRest": "required",
+      "encryptionInTransit": "required"
+    },
+    "accessControl": {
+      "multiFactorAuth": "required",
+      "roleBasedAccess": "enforced",
+      "principleOfLeastPrivilege": "enforced",
+      "sessionTimeout": 1800000
+    },
+    "auditAndCompliance": {
+      "auditLogging": "comprehensive",
+      "logRetention": "7years",
+      "complianceReporting": "automated",
+      "incidentResponse": "mandatory"
+    }
+  }
+}

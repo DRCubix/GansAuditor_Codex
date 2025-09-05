@@ -1,0 +1,251 @@
+/**
+ * GAN Auditor Module Exports
+ * 
+ * This module exports the main GAN Auditor orchestration layer and related utilities.
+ */
+
+export { 
+  GanAuditor, 
+  createGanAuditor, 
+  createGanAuditorWithComponents,
+  type GanAuditorConfig,
+  DEFAULT_GAN_AUDITOR_CONFIG 
+} from './gan-auditor.js';
+
+export {
+  SynchronousAuditEngine,
+  createSynchronousAuditEngine,
+  createSynchronousAuditEngineWithAuditor,
+  type SynchronousAuditEngineConfig,
+  type SynchronousAuditResult,
+  DEFAULT_SYNCHRONOUS_AUDIT_ENGINE_CONFIG
+} from './synchronous-audit-engine.js';
+
+export {
+  CompletionEvaluator,
+  createCompletionEvaluator,
+  validateCompletionCriteria,
+  DEFAULT_COMPLETION_CRITERIA,
+  type CompletionResult,
+  type TerminationResult,
+  type CompletionStatus,
+  type CompletionCriteria
+} from './completion-evaluator.js';
+
+export {
+  LoopDetector,
+  DEFAULT_LOOP_DETECTOR_CONFIG,
+  type LoopDetectorConfig,
+  type DetailedStagnationAnalysis
+} from './loop-detector.js';
+
+export {
+  AuditCache,
+  createAuditCache,
+  type AuditCacheConfig,
+  type AuditCacheEntry,
+  type AuditCacheStats,
+  DEFAULT_AUDIT_CACHE_CONFIG
+} from './audit-cache.js';
+
+export {
+  ProgressTracker,
+  createProgressTracker,
+  type ProgressTrackerConfig,
+  type ProgressUpdate,
+  AuditStage,
+  DEFAULT_PROGRESS_TRACKER_CONFIG
+} from './progress-tracker.js';
+
+export {
+  AuditQueue,
+  createAuditQueue,
+  type AuditQueueConfig,
+  type AuditJob,
+  type QueueStats,
+  DEFAULT_AUDIT_QUEUE_CONFIG
+} from './audit-queue.js';
+
+export {
+  AuditWorkflowEngine,
+  createAuditWorkflowEngine,
+  validateWorkflow
+} from './audit-workflow.js';
+
+export {
+  type AuditWorkflow,
+  type WorkflowStep,
+  type WorkflowStepResult,
+  type WorkflowExecutionState,
+  type WorkflowStatus,
+  type WorkflowConfig,
+  type EvidenceItem,
+  type EvidenceType,
+  type SeverityLevel,
+  type InitStepOutputs,
+  type ReproStepOutputs,
+  type StaticStepOutputs,
+  type AcceptanceCriterion,
+  type SessionContext,
+  type LintResult,
+  type FormatIssue,
+  type TypeCheckResult,
+  type CodeSmell,
+  DEFAULT_AUDIT_WORKFLOW,
+  DEFAULT_WORKFLOW_CONFIG
+} from './workflow-types.js';
+
+export {
+  executeInitStep,
+  type InitStepInputs,
+  DEFAULT_INIT_INPUTS
+} from './workflow-steps/init-step.js';
+
+export {
+  executeReproStep,
+  type ReproStepInputs,
+  DEFAULT_REPRO_INPUTS
+} from './workflow-steps/repro-step.js';
+
+export {
+  executeStaticStep,
+  type StaticStepInputs,
+  DEFAULT_STATIC_INPUTS
+} from './workflow-steps/static-step.js';
+
+export {
+  QualityAssessmentFramework,
+  createDefaultQualityFramework,
+  validateQualityDimensions,
+  validateQualityDimension,
+  getQualityDimensionById,
+  getQualityCriterionById,
+  calculateScoreDistribution,
+  getFailingDimensions,
+  getCriticalIssuesByDimension,
+  DEFAULT_QUALITY_DIMENSIONS,
+  DEFAULT_QUALITY_FRAMEWORK_CONFIG,
+  type QualityDimension,
+  type QualityCriterion,
+  type QualityAssessment,
+  type DimensionEvaluation,
+  type CriterionEvaluation,
+  type CriterionEvidence,
+  type CriticalIssue,
+  type QualityFrameworkConfig,
+  type QualityEvaluationContext,
+  type EvaluationMethod
+} from './quality-assessment.js';
+
+// Quality Assessors
+export * from './quality-assessors/index.js';
+
+// Complexity Analysis
+export {
+  ComplexityAnalyzer,
+  createComplexityAnalyzer,
+  validateComplexityMetrics,
+  DEFAULT_COMPLEXITY_AUDIT_CONFIG,
+  type ComplexityMetrics,
+  type HalsteadMetrics,
+  type ComplexityAuditConfig,
+  type ComplexityThresholds,
+  type FocusAreaWeights,
+  type AuditDepthAdjustment,
+  type AuditDepthLevel,
+  type CodeAnalysisContext
+} from './complexity-analyzer.js';
+
+// Project Context Analysis
+export {
+  ProjectContextAnalyzer,
+  createProjectContextAnalyzer,
+  validateProjectContext,
+  DEFAULT_PROJECT_ANALYSIS_CONFIG,
+  type ProjectContext,
+  type ProjectType,
+  type TechnologyStack,
+  type ProjectPattern,
+  type PatternCategory,
+  type PatternRule,
+  type RuleType,
+  type EnforcementLevel,
+  type RuleExample,
+  type CodeConvention,
+  type ConventionCategory,
+  type ConventionEvidence,
+  type ProjectConfiguration,
+  type ProjectMetadata,
+  type ProjectSize,
+  type TeamSize,
+  type ProjectMaturity,
+  type ProjectAnalysisConfig
+} from './project-context-analyzer.js';
+
+// Developer Pattern Recognition
+export {
+  DeveloperPatternRecognizer,
+  createDeveloperPatternRecognizer,
+  validateDeveloperProfile,
+  DEFAULT_ADAPTIVE_FEEDBACK_CONFIG,
+  type DeveloperProfile,
+  type ExperienceLevel,
+  type CodingPattern,
+  type TechnicalPreference,
+  type PreferenceCategory,
+  type CommunicationStyle,
+  type DetailLevel,
+  type FeedbackTone,
+  type ExampleType,
+  type ExplanationStyle,
+  type LearningPattern,
+  type LearningType,
+  type FeedbackHistory,
+  type FeedbackContext,
+  type AdaptiveFeedbackConfig,
+  type AdaptedFeedback,
+  type AdaptedSuggestion,
+  type SuggestionPriority,
+  type DifficultyLevel
+} from './developer-pattern-recognizer.js';
+
+// Impact-Based Prioritization
+export {
+  ImpactBasedPrioritizer,
+  createImpactBasedPrioritizer,
+  validateImpactAnalyzedSuggestion,
+  DEFAULT_PRIORITIZATION_CONFIG,
+  type ImpactAnalyzedSuggestion,
+  type SuggestionCategory,
+  type ImpactAssessment,
+  type ImpactDimension,
+  type ImpactDimensionType,
+  type Stakeholder,
+  type StakeholderType,
+  type ImpactLevel,
+  type RiskAssessment,
+  type RiskType,
+  type BenefitAssessment,
+  type BenefitType,
+  type FeasibilityAnalysis,
+  type TechnicalFeasibility,
+  type ComplexityLevel,
+  type ResourceFeasibility,
+  type ResourceAvailability,
+  type TimelineFeasibility,
+  type OrganizationalFeasibility,
+  type ReadinessLevel,
+  type ResistanceLevel,
+  type AlignmentLevel,
+  type ROIAnalysis,
+  type InvestmentCost,
+  type ExpectedReturn,
+  type ReturnType,
+  type ImplementationPathway,
+  type PathwayPhase,
+  type PhaseTask,
+  type PhaseDependency,
+  type DependencyType,
+  type Milestone,
+  type PrioritizationConfig
+} from './impact-based-prioritizer.js';

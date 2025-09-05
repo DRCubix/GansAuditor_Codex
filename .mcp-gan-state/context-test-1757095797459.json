@@ -1,0 +1,263 @@
+{
+  "id": "context-test-1757095797459",
+  "config": {
+    "task": "Audit and improve the provided candidate",
+    "scope": "diff",
+    "threshold": 85,
+    "maxCycles": 1,
+    "candidates": 1,
+    "judges": [
+      "internal"
+    ],
+    "applyFixes": false
+  },
+  "history": [
+    {
+      "timestamp": 1757095802586,
+      "thoughtNumber": 1,
+      "review": {
+        "overall": 50,
+        "dimensions": [
+          {
+            "name": "accuracy",
+            "score": 50
+          },
+          {
+            "name": "completeness",
+            "score": 50
+          },
+          {
+            "name": "clarity",
+            "score": 50
+          },
+          {
+            "name": "actionability",
+            "score": 50
+          },
+          {
+            "name": "human_likeness",
+            "score": 50
+          }
+        ],
+        "verdict": "revise",
+        "review": {
+          "summary": "Audit could not be completed due to an error: Codex execution failed. Please review the code manually and ensure all dependencies are properly configured.",
+          "inline": [],
+          "citations": []
+        },
+        "proposed_diff": null,
+        "iterations": 1,
+        "judge_cards": [
+          {
+            "model": "fallback",
+            "score": 50,
+            "notes": "Fallback response: Codex execution failed"
+          }
+        ]
+      },
+      "config": {
+        "task": "Audit and improve the provided candidate",
+        "scope": "diff",
+        "threshold": 85,
+        "maxCycles": 1,
+        "candidates": 1,
+        "judges": [
+          "internal"
+        ],
+        "applyFixes": false
+      }
+    },
+    {
+      "timestamp": 1757095807693,
+      "thoughtNumber": 2,
+      "review": {
+        "overall": 50,
+        "dimensions": [
+          {
+            "name": "accuracy",
+            "score": 50
+          },
+          {
+            "name": "completeness",
+            "score": 50
+          },
+          {
+            "name": "clarity",
+            "score": 50
+          },
+          {
+            "name": "actionability",
+            "score": 50
+          },
+          {
+            "name": "human_likeness",
+            "score": 50
+          }
+        ],
+        "verdict": "revise",
+        "review": {
+          "summary": "Audit could not be completed due to an error: Codex execution failed. Please review the code manually and ensure all dependencies are properly configured.",
+          "inline": [],
+          "citations": []
+        },
+        "proposed_diff": null,
+        "iterations": 1,
+        "judge_cards": [
+          {
+            "model": "fallback",
+            "score": 50,
+            "notes": "Fallback response: Codex execution failed"
+          }
+        ]
+      },
+      "config": {
+        "task": "Audit and improve the provided candidate",
+        "scope": "diff",
+        "threshold": 85,
+        "maxCycles": 1,
+        "candidates": 1,
+        "judges": [
+          "internal"
+        ],
+        "applyFixes": false
+      }
+    }
+  ],
+  "iterations": [
+    {
+      "thoughtNumber": 1,
+      "code": "Context Window Test 1: Small Context Test\n\nLet me analyze this codebase for quality and best practices:\n\n```typescript\nfunction hello() { return \"Hello World\"; }\n```\n\nPlease provide a comprehensive audit focusing on:\n1. Code quality and maintainability\n2. Performance considerations\n3. Security vulnerabilities\n4. Best practices adherence\n5. Context management efficiency",
+      "auditResult": {
+        "overall": 50,
+        "dimensions": [
+          {
+            "name": "accuracy",
+            "score": 50
+          },
+          {
+            "name": "completeness",
+            "score": 50
+          },
+          {
+            "name": "clarity",
+            "score": 50
+          },
+          {
+            "name": "actionability",
+            "score": 50
+          },
+          {
+            "name": "human_likeness",
+            "score": 50
+          }
+        ],
+        "verdict": "revise",
+        "review": {
+          "summary": "Audit could not be completed due to an error: Codex execution failed. Please review the code manually and ensure all dependencies are properly configured.",
+          "inline": [],
+          "citations": []
+        },
+        "proposed_diff": null,
+        "iterations": 1,
+        "judge_cards": [
+          {
+            "model": "fallback",
+            "score": 50,
+            "notes": "Fallback response: Codex execution failed"
+          }
+        ]
+      },
+      "timestamp": 1757095802586
+    },
+    {
+      "thoughtNumber": 2,
+      "code": "Context Window Test 2: Medium Context Test\n\nLet me analyze this codebase for quality and best practices:\n\n```typescript\n\n// Component 1: UserProfile1.tsx\nimport React, { useState, useEffect } from 'react';\nimport { User, Profile, Settings } from '../types/user';\nimport { ApiService } from '../services/api';\nimport { ValidationUtils } from '../utils/validation';\n\ninterface UserProfile1Props {\n  userId: string;\n  onUpdate?: (profile: Profile) => void;\n  settings?: Settings;\n}\n\nexport const UserProfile1: React.FC<UserProfile1Props> = ({ \n  userId, \n  onUpdate, \n  settings \n}) => {\n  const [profile, setProfile] = useState<Profile | null>(null);\n  const [loading, setLoading] = useState(true);\n  const [error, setError] = useState<string | null>(null);\n\n  useEffect(() => {\n    const fetchProfile = async () => {\n      try {\n        setLoading(true);\n        const data = await ApiService.getUserProfile(userId);\n        \n        if (!ValidationUtils.isValidProfile(data)) {\n          throw new Error('Invalid profile data received');\n        }\n        \n        setProfile(data);\n        onUpdate?.(data);\n      } catch (err) {\n        setError(err instanceof Error ? err.message : 'Unknown error');\n      } finally {\n        setLoading(false);\n      }\n    };\n\n    if (userId) {\n      fetchProfile();\n    }\n  }, [userId, onUpdate]);\n\n  const handleProfileUpdate = async (updates: Partial<Profile>) => {\n    try {\n      const updatedProfile = await ApiService.updateProfile(userId, updates);\n      setProfile(updatedProfile);\n      onUpdate?.(updatedProfile);\n    } catch (err) {\n      setError(err instanceof Error ? err.message : 'Update failed');\n    }\n  };\n\n  if (loading) return <div>Loading profile...</div>;\n  if (error) return <div>Error: {error}</div>;\n  if (!profile) return <div>No profile found</div>;\n\n  return (\n    <div className=\"user-profile-1\">\n      <h2>{profile.name}</h2>\n      <p>{profile.email}</p>\n      <button onClick={() => handleProfileUpdate({ lastSeen: new Date() })}>\n        Update Last Seen\n      </button>\n    </div>\n  );\n};\n\n\n// Component 2: UserProfile2.tsx\nimport React, { useState\n```\n\nPlease provide a comprehensive audit focusing on:\n1. Code quality and maintainability\n2. Performance considerations\n3. Security vulnerabilities\n4. Best practices adherence\n5. Context management efficiency",
+      "auditResult": {
+        "overall": 50,
+        "dimensions": [
+          {
+            "name": "accuracy",
+            "score": 50
+          },
+          {
+            "name": "completeness",
+            "score": 50
+          },
+          {
+            "name": "clarity",
+            "score": 50
+          },
+          {
+            "name": "actionability",
+            "score": 50
+          },
+          {
+            "name": "human_likeness",
+            "score": 50
+          }
+        ],
+        "verdict": "revise",
+        "review": {
+          "summary": "Audit could not be completed due to an error: Codex execution failed. Please review the code manually and ensure all dependencies are properly configured.",
+          "inline": [],
+          "citations": []
+        },
+        "proposed_diff": null,
+        "iterations": 1,
+        "judge_cards": [
+          {
+            "model": "fallback",
+            "score": 50,
+            "notes": "Fallback response: Codex execution failed"
+          }
+        ]
+      },
+      "timestamp": 1757095807693
+    }
+  ],
+  "currentLoop": 2,
+  "isComplete": false,
+  "codexContextActive": false,
+  "createdAt": 1757095799463,
+  "updatedAt": 1757095807693,
+  "lastGan": {
+    "overall": 50,
+    "dimensions": [
+      {
+        "name": "accuracy",
+        "score": 50
+      },
+      {
+        "name": "completeness",
+        "score": 50
+      },
+      {
+        "name": "clarity",
+        "score": 50
+      },
+      {
+        "name": "actionability",
+        "score": 50
+      },
+      {
+        "name": "human_likeness",
+        "score": 50
+      }
+    ],
+    "verdict": "revise",
+    "review": {
+      "summary": "Audit could not be completed due to an error: Codex execution failed. Please review the code manually and ensure all dependencies are properly configured.",
+      "inline": [],
+      "citations": []
+    },
+    "proposed_diff": null,
+    "iterations": 1,
+    "judge_cards": [
+      {
+        "model": "fallback",
+        "score": 50,
+        "notes": "Fallback response: Codex execution failed"
+      }
+    ]
+  }
+}

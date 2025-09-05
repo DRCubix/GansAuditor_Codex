@@ -1,0 +1,126 @@
+{
+  "metadata": {
+    "name": "Minimal Configuration",
+    "description": "Lightweight configuration with essential features only for resource-constrained environments",
+    "environment": "any",
+    "version": "2.0.0",
+    "author": "Platform Team",
+    "tags": ["minimal", "lightweight", "resource-constrained", "basic"],
+    "createdAt": "2024-01-15T10:30:00Z",
+    "updatedAt": "2024-01-15T10:30:00Z",
+    "validatedWith": "system-prompt-validator-2.0.0"
+  },
+  "version": "2.0.0",
+  "systemPrompt": {
+    "identity": {
+      "name": "Kilo Code Lite",
+      "role": "Basic Adversarial Auditor",
+      "stance": "efficient-adversarial",
+      "authority": "spec-ground-truth"
+    },
+    "workflow": {
+      "steps": 4,
+      "enforceOrder": true,
+      "allowSkipping": false,
+      "evidenceRequired": false,
+      "minimalSteps": [
+        "INIT",
+        "STATIC",
+        "TESTS",
+        "VERDICT"
+      ],
+      "customSteps": []
+    },
+    "qualityFramework": {
+      "dimensions": 3,
+      "weightingScheme": "minimal",
+      "scoringScale": "0-100",
+      "aggregationMethod": "simple-average",
+      "weights": {
+        "correctnessCompleteness": 0.50,
+        "tests": 0.30,
+        "styleConventions": 0.20
+      },
+      "simplifiedScoring": true
+    },
+    "completionCriteria": {
+      "tiers": 1,
+      "killSwitches": 1,
+      "shipGates": 2,
+      "stagnationThreshold": 0.90,
+      "maxIterations": 10,
+      "tierThresholds": {
+        "tier1": { "score": 70, "minLoops": 3 }
+      },
+      "simpleCompletion": true
+    },
+    "integration": {
+      "sessionManagement": false,
+      "codexIntegration": true,
+      "contextAwareness": false,
+      "performanceOptimization": false,
+      "minimalIntegration": true
+    },
+    "security": {
+      "sanitizePII": true,
+      "validateCommands": false,
+      "respectPermissions": false,
+      "flagVulnerabilities": false,
+      "commandValidationLevel": "none",
+      "auditTrail": false,
+      "encryptSessionData": false,
+      "minimalSecurity": true
+    },
+    "performance": {
+      "contextTokenLimit": 50000,
+      "auditTimeoutMs": 15000,
+      "enableCaching": false,
+      "enableProgressTracking": false,
+      "maxConcurrentAudits": 1,
+      "memoryLimit": "128MB",
+      "minimalResources": true,
+      "fastMode": true
+    },
+    "monitoring": {
+      "enabled": false,
+      "logLevel": "error",
+      "metricsCollection": false,
+      "alerting": false,
+      "performanceTracking": false,
+      "healthChecks": false,
+      "dashboardEnabled": false,
+      "minimalMonitoring": true
+    },
+    "experimental": {
+      "enableBetaFeatures": false,
+      "advancedWorkflow": false,
+      "aiAssistedFeedback": false,
+      "contextOptimization": false
+    }
+  },
+  "featureFlags": {
+    "systemPromptEnabled": {
+      "enabled": true,
+      "rolloutPercentage": 100,
+      "environments": ["development", "testing"]
+    },
+    "minimalMode": {
+      "enabled": true,
+      "rolloutPercentage": 100,
+      "environments": ["development", "testing", "production"]
+    }
+  },
+  "resourceLimits": {
+    "maxMemoryUsage": "128MB",
+    "maxCpuUsage": 0.3,
+    "maxExecutionTime": 15000,
+    "maxConcurrentOperations": 1
+  },
+  "simplifications": {
+    "skipNonEssentialSteps": true,
+    "useBasicScoring": true,
+    "disableAdvancedFeatures": true,
+    "minimizeLogging": true,
+    "reduceContextSize": true
+  }
+}

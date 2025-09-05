@@ -1,0 +1,21 @@
+{
+  "id": "cleanup-test-0",
+  "config": {
+    "task": "test",
+    "scope": "diff",
+    "threshold": 85,
+    "maxCycles": 1,
+    "candidates": 1,
+    "judges": [
+      "internal"
+    ],
+    "applyFixes": false
+  },
+  "history": [],
+  "createdAt": 1757095818859,
+  "updatedAt": 1757095818859,
+  "iterations": [],
+  "currentLoop": 0,
+  "isComplete": false,
+  "codexContextActive": false
+}

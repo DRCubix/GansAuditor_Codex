@@ -1,0 +1,400 @@
+{
+  "metadata": {
+    "name": "A/B Testing Feature Flags",
+    "description": "Feature flag configuration for A/B testing different system prompt variations",
+    "version": "2.0.0",
+    "author": "Product Team",
+    "tags": ["a-b-testing", "experimentation", "feature-flags"],
+    "createdAt": "2024-01-15T10:30:00Z",
+    "updatedAt": "2024-01-15T10:30:00Z"
+  },
+  "version": "2.0.0",
+  "globalSettings": {
+    "enabled": true,
+    "defaultRollout": 0,
+    "cacheTimeout": 300000,
+    "refreshInterval": 60000,
+    "evaluationLogging": true
+  },
+  "experiments": {
+    "workflowOptimization": {
+      "name": "Workflow Optimization A/B Test",
+      "description": "Test different workflow configurations for optimal performance",
+      "enabled": true,
+      "variants": [
+        {
+          "name": "control",
+          "rolloutPercentage": 50,
+          "description": "Standard 8-step workflow",
+          "config": {
+            "workflow": {
+              "steps": 8,
+              "enforceOrder": true,
+              "allowSkipping": false
+            }
+          }
+        },
+        {
+          "name": "optimized",
+          "rolloutPercentage": 50,
+          "description": "Optimized 6-step workflow with parallel execution",
+          "config": {
+            "workflow": {
+              "steps": 6,
+              "enforceOrder": false,
+              "allowSkipping": true,
+              "parallelExecution": true
+            }
+          }
+        }
+      ],
+      "targetingRules": [
+        {
+          "type": "environment",
+          "operator": "equals",
+          "value": "production"
+        }
+      ],
+      "metrics": [
+        "audit_completion_time",
+        "quality_score_accuracy",
+        "developer_satisfaction"
+      ]
+    },
+    "qualityFrameworkComparison": {
+      "name": "Quality Framework A/B Test",
+      "description": "Compare different quality assessment approaches",
+      "enabled": true,
+      "variants": [
+        {
+          "name": "traditional",
+          "rolloutPercentage": 33,
+          "description": "Traditional rule-based quality assessment",
+          "config": {
+            "qualityFramework": {
+              "scoringMethod": "rule-based",
+              "weights": {
+                "correctnessCompleteness": 0.30,
+                "tests": 0.20,
+                "styleConventions": 0.15,
+                "security": 0.15,
+                "performance": 0.10,
+                "docsTraceability": 0.10
+              }
+            }
+          }
+        },
+        {
+          "name": "ml-enhanced",
+          "rolloutPercentage": 33,
+          "description": "ML-enhanced quality assessment",
+          "config": {
+            "qualityFramework": {
+              "scoringMethod": "ml-enhanced",
+              "mlModel": "quality-predictor-v2",
+              "weights": {
+                "correctnessCompleteness": 0.25,
+                "tests": 0.25,
+                "styleConventions": 0.15,
+                "security": 0.20,
+                "performance": 0.10,
+                "docsTraceability": 0.05
+              }
+            }
+          }
+        },
+        {
+          "name": "adaptive",
+          "rolloutPercentage": 34,
+          "description": "Adaptive quality assessment based on project context",
+          "config": {
+            "qualityFramework": {
+              "scoringMethod": "adaptive",
+              "adaptToProject": true,
+              "learningEnabled": true
+            }
+          }
+        }
+      ],
+      "targetingRules": [
+        {
+          "type": "team",
+          "operator": "in",
+          "value": ["frontend", "backend", "fullstack"]
+        }
+      ],
+      "metrics": [
+        "quality_prediction_accuracy",
+        "false_positive_rate",
+        "issue_detection_rate"
+      ]
+    },
+    "completionCriteriaTest": {
+      "name": "Completion Criteria A/B Test",
+      "description": "Test different completion criteria for optimal balance",
+      "enabled": true,
+      "variants": [
+        {
+          "name": "strict",
+          "rolloutPercentage": 25,
+          "description": "Strict completion criteria for high quality",
+          "config": {
+            "completionCriteria": {
+              "tierThresholds": {
+                "tier1": { "score": 95, "minLoops": 10 },
+                "tier2": { "score": 90, "minLoops": 15 },
+                "tier3": { "score": 85, "minLoops": 20 }
+              },
+              "maxIterations": 25
+            }
+          }
+        },
+        {
+          "name": "balanced",
+          "rolloutPercentage": 50,
+          "description": "Balanced completion criteria",
+          "config": {
+            "completionCriteria": {
+              "tierThresholds": {
+                "tier1": { "score": 90, "minLoops": 8 },
+                "tier2": { "score": 85, "minLoops": 12 },
+                "tier3": { "score": 80, "minLoops": 15 }
+              },
+              "maxIterations": 20
+            }
+          }
+        },
+        {
+          "name": "fast",
+          "rolloutPercentage": 25,
+          "description": "Fast completion for rapid iteration",
+          "config": {
+            "completionCriteria": {
+              "tierThresholds": {
+                "tier1": { "score": 85, "minLoops": 5 },
+                "tier2": { "score": 80, "minLoops": 8 },
+                "tier3": { "score": 75, "minLoops": 10 }
+              },
+              "maxIterations": 15
+            }
+          }
+        }
+      ],
+      "targetingRules": [
+        {
+          "type": "project_phase",
+          "operator": "in",
+          "value": ["development", "testing", "production"]
+        }
+      ],
+      "metrics": [
+        "time_to_completion",
+        "final_quality_score",
+        "iteration_count"
+      ]
+    }
+  },
+  "featureFlags": {
+    "systemPromptEnabled": {
+      "name": "System Prompt Enabled",
+      "description": "Enable or disable the system prompt functionality",
+      "enabled": true,
+      "rolloutPercentage": 100,
+      "environments": ["development", "staging", "production"],
+      "conditions": []
+    },
+    "advancedWorkflowVariantA": {
+      "name": "Advanced Workflow Variant A",
+      "description": "Test variant A of advanced workflow features",
+      "enabled": true,
+      "rolloutPercentage": 50,
+      "environments": ["staging", "production"],
+      "conditions": [
+        {
+          "type": "custom",
+          "field": "testGroup",
+          "operator": "equals",
+          "value": "A"
+        }
+      ],
+      "dependencies": ["systemPromptEnabled"]
+    },
+    "advancedWorkflowVariantB": {
+      "name": "Advanced Workflow Variant B",
+      "description": "Test variant B of advanced workflow features",
+      "enabled": true,
+      "rolloutPercentage": 50,
+      "environments": ["staging", "production"],
+      "conditions": [
+        {
+          "type": "custom",
+          "field": "testGroup",
+          "operator": "equals",
+          "value": "B"
+        }
+      ],
+      "dependencies": ["systemPromptEnabled"]
+    },
+    "mlAssistedFeedbackV1": {
+      "name": "ML Assisted Feedback V1",
+      "description": "Version 1 of ML-assisted feedback generation",
+      "enabled": true,
+      "rolloutPercentage": 33,
+      "environments": ["production"],
+      "conditions": [
+        {
+          "type": "custom",
+          "field": "mlVariant",
+          "operator": "equals",
+          "value": "v1"
+        }
+      ]
+    },
+    "mlAssistedFeedbackV2": {
+      "name": "ML Assisted Feedback V2",
+      "description": "Version 2 of ML-assisted feedback generation",
+      "enabled": true,
+      "rolloutPercentage": 33,
+      "environments": ["production"],
+      "conditions": [
+        {
+          "type": "custom",
+          "field": "mlVariant",
+          "operator": "equals",
+          "value": "v2"
+        }
+      ]
+    },
+    "contextOptimizationAlgorithmA": {
+      "name": "Context Optimization Algorithm A",
+      "description": "Test algorithm A for context optimization",
+      "enabled": true,
+      "rolloutPercentage": 50,
+      "environments": ["production"],
+      "conditions": [
+        {
+          "type": "custom",
+          "field": "optimizationGroup",
+          "operator": "equals",
+          "value": "A"
+        }
+      ]
+    },
+    "contextOptimizationAlgorithmB": {
+      "name": "Context Optimization Algorithm B",
+      "description": "Test algorithm B for context optimization",
+      "enabled": true,
+      "rolloutPercentage": 50,
+      "environments": ["production"],
+      "conditions": [
+        {
+          "type": "custom",
+          "field": "optimizationGroup",
+          "operator": "equals",
+          "value": "B"
+        }
+      ]
+    },
+    "adaptiveQualityThresholds": {
+      "name": "Adaptive Quality Thresholds",
+      "description": "Enable adaptive quality thresholds based on project context",
+      "enabled": true,
+      "rolloutPercentage": 25,
+      "environments": ["staging", "production"],
+      "conditions": [
+        {
+          "type": "team",
+          "operator": "in",
+          "value": ["senior-team", "expert-team"]
+        }
+      ]
+    },
+    "predictiveCompletion": {
+      "name": "Predictive Completion",
+      "description": "Use predictive models to determine completion criteria",
+      "enabled": true,
+      "rolloutPercentage": 10,
+      "environments": ["staging"],
+      "conditions": [
+        {
+          "type": "user",
+          "field": "role",
+          "operator": "in",
+          "value": ["senior-developer", "tech-lead"]
+        }
+      ]
+    }
+  },
+  "targeting": {
+    "userAttributes": [
+      "userId",
+      "teamId",
+      "role",
+      "experience",
+      "projectType"
+    ],
+    "sessionAttributes": [
+      "sessionId",
+      "branchId",
+      "projectComplexity",
+      "codebaseSize"
+    ],
+    "customAttributes": [
+      "testGroup",
+      "mlVariant",
+      "optimizationGroup",
+      "experimentCohort"
+    ]
+  },
+  "analytics": {
+    "enabled": true,
+    "trackingEvents": [
+      "flag_evaluation",
+      "experiment_assignment",
+      "variant_exposure",
+      "conversion_event"
+    ],
+    "metricsCollection": {
+      "performance": true,
+      "quality": true,
+      "userExperience": true,
+      "businessMetrics": true
+    },
+    "reportingInterval": 3600000,
+    "dataRetention": "90days"
+  },
+  "safeguards": {
+    "killSwitches": {
+      "enabled": true,
+      "triggers": [
+        {
+          "metric": "error_rate",
+          "threshold": 0.05,
+          "action": "disable_experiment"
+        },
+        {
+          "metric": "performance_degradation",
+          "threshold": 0.2,
+          "action": "rollback_to_control"
+        }
+      ]
+    },
+    "gradualRollout": {
+      "enabled": true,
+      "stages": [
+        { "percentage": 5, "duration": 3600000 },
+        { "percentage": 25, "duration": 7200000 },
+        { "percentage": 50, "duration": 14400000 },
+        { "percentage": 100, "duration": null }
+      ]
+    },
+    "monitoring": {
+      "alertOnAnomalies": true,
+      "alertThresholds": {
+        "error_rate": 0.02,
+        "latency_p99": 5000,
+        "success_rate": 0.98
+      }
+    }
+  }
+}

@@ -1,0 +1,254 @@
+{
+  "version": "1.0.0",
+  "flags": {
+    "systemPromptEnabled": {
+      "name": "systemPromptEnabled",
+      "description": "Enable system prompt functionality with gradual rollout",
+      "enabled": true,
+      "rolloutPercentage": 25,
+      "environments": ["production"],
+      "conditions": [
+        {
+          "type": "environment",
+          "operator": "equals",
+          "value": "production"
+        }
+      ],
+      "metadata": {
+        "createdAt": "2024-01-15T10:30:00Z",
+        "updatedAt": "2024-01-15T10:30:00Z",
+        "tags": ["core", "gradual-rollout"],
+        "owner": "Platform Team"
+      }
+    },
+    "advancedWorkflow": {
+      "name": "advancedWorkflow",
+      "description": "Enable advanced 8-step audit workflow for power users",
+      "enabled": true,
+      "rolloutPercentage": 50,
+      "environments": ["staging", "production"],
+      "conditions": [
+        {
+          "type": "environment",
+          "operator": "in",
+          "value": ["staging", "production"]
+        },
+        {
+          "type": "custom",
+          "field": "userTier",
+          "operator": "in",
+          "value": ["premium", "enterprise"]
+        }
+      ],
+      "metadata": {
+        "createdAt": "2024-01-15T10:30:00Z",
+        "updatedAt": "2024-01-15T10:30:00Z",
+        "tags": ["workflow", "premium"],
+        "owner": "Product Team"
+      }
+    },
+    "enhancedSecurity": {
+      "name": "enhancedSecurity",
+      "description": "Enhanced security features including PII sanitization and command validation",
+      "enabled": true,
+      "rolloutPercentage": 75,
+      "environments": ["staging", "production"],
+      "conditions": [
+        {
+          "type": "environment",
+          "operator": "not_equals",
+          "value": "development"
+        }
+      ],
+      "metadata": {
+        "createdAt": "2024-01-15T10:30:00Z",
+        "updatedAt": "2024-01-15T10:30:00Z",
+        "tags": ["security", "compliance"],
+        "owner": "Security Team"
+      }
+    },
+    "performanceOptimizations": {
+      "name": "performanceOptimizations",
+      "description": "Performance optimizations including caching and context optimization",
+      "enabled": true,
+      "rolloutPercentage": 90,
+      "environments": ["development", "staging", "production"],
+      "conditions": [],
+      "metadata": {
+        "createdAt": "2024-01-15T10:30:00Z",
+        "updatedAt": "2024-01-15T10:30:00Z",
+        "tags": ["performance", "optimization"],
+        "owner": "Performance Team"
+      }
+    },
+    "experimentalFeatures": {
+      "name": "experimentalFeatures",
+      "description": "Experimental features and new algorithms for beta testing",
+      "enabled": true,
+      "rolloutPercentage": 5,
+      "environments": ["development"],
+      "conditions": [
+        {
+          "type": "environment",
+          "operator": "equals",
+          "value": "development"
+        },
+        {
+          "type": "custom",
+          "field": "betaTester",
+          "operator": "equals",
+          "value": true
+        }
+      ],
+      "metadata": {
+        "createdAt": "2024-01-15T10:30:00Z",
+        "updatedAt": "2024-01-15T10:30:00Z",
+        "tags": ["experimental", "beta"],
+        "owner": "R&D Team"
+      }
+    },
+    "debugMode": {
+      "name": "debugMode",
+      "description": "Debug logging and verbose output for troubleshooting",
+      "enabled": false,
+      "rolloutPercentage": 100,
+      "environments": ["development"],
+      "conditions": [
+        {
+          "type": "environment",
+          "operator": "equals",
+          "value": "development"
+        }
+      ],
+      "metadata": {
+        "createdAt": "2024-01-15T10:30:00Z",
+        "updatedAt": "2024-01-15T10:30:00Z",
+        "tags": ["debug", "development"],
+        "owner": "Engineering Team"
+      }
+    },
+    "metricsCollection": {
+      "name": "metricsCollection",
+      "description": "Metrics collection and performance monitoring",
+      "enabled": true,
+      "rolloutPercentage": 100,
+      "environments": ["staging", "production"],
+      "conditions": [
+        {
+          "type": "environment",
+          "operator": "in",
+          "value": ["staging", "production"]
+        }
+      ],
+      "metadata": {
+        "createdAt": "2024-01-15T10:30:00Z",
+        "updatedAt": "2024-01-15T10:30:00Z",
+        "tags": ["metrics", "monitoring"],
+        "owner": "Operations Team"
+      }
+    }
+  },
+  "globalSettings": {
+    "defaultRolloutPercentage": 100,
+    "enabledEnvironments": ["development", "staging", "production"],
+    "evaluationLogging": true,
+    "cacheTimeout": 300000,
+    "refreshInterval": 60000
+  },
+  "rolloutStrategy": {
+    "type": "gradual",
+    "phases": [
+      {
+        "name": "Phase 1 - Internal Testing",
+        "rolloutPercentage": 5,
+        "duration": "1 week",
+        "criteria": "Internal users and beta testers",
+        "successMetrics": [
+          "Zero critical errors",
+          "Performance within acceptable limits",
+          "Positive user feedback"
+        ]
+      },
+      {
+        "name": "Phase 2 - Limited Rollout",
+        "rolloutPercentage": 25,
+        "duration": "2 weeks",
+        "criteria": "Premium users in select regions",
+        "successMetrics": [
+          "Error rate < 0.1%",
+          "Performance improvement > 10%",
+          "User satisfaction > 85%"
+        ]
+      },
+      {
+        "name": "Phase 3 - Expanded Rollout",
+        "rolloutPercentage": 50,
+        "duration": "2 weeks",
+        "criteria": "All premium users",
+        "successMetrics": [
+          "System stability maintained",
+          "Support ticket volume stable",
+          "Business metrics positive"
+        ]
+      },
+      {
+        "name": "Phase 4 - Full Rollout",
+        "rolloutPercentage": 100,
+        "duration": "1 week",
+        "criteria": "All users",
+        "successMetrics": [
+          "Complete migration successful",
+          "All systems operational",
+          "User adoption targets met"
+        ]
+      }
+    ],
+    "rollbackCriteria": [
+      "Critical error rate > 0.5%",
+      "Performance degradation > 20%",
+      "User satisfaction < 70%",
+      "System availability < 99.5%"
+    ],
+    "monitoringPeriod": "72 hours",
+    "approvalRequired": true
+  },
+  "metadata": {
+    "name": "Gradual Rollout Feature Flags",
+    "description": "Feature flag configuration for gradual rollout of system prompt features",
+    "version": "1.0.0",
+    "author": "Platform Team",
+    "tags": ["rollout", "feature-flags", "production"],
+    "createdAt": "2024-01-15T10:30:00Z",
+    "updatedAt": "2024-01-15T10:30:00Z",
+    "rolloutPlan": {
+      "startDate": "2024-01-20T00:00:00Z",
+      "endDate": "2024-02-17T00:00:00Z",
+      "totalDuration": "4 weeks",
+      "riskLevel": "Medium",
+      "impactAssessment": "High value, medium risk rollout"
+    },
+    "stakeholders": [
+      {
+        "team": "Platform Team",
+        "role": "Implementation",
+        "contact": "platform-team@company.com"
+      },
+      {
+        "team": "Product Team",
+        "role": "Requirements",
+        "contact": "product-team@company.com"
+      },
+      {
+        "team": "Operations Team",
+        "role": "Monitoring",
+        "contact": "ops-team@company.com"
+      }
+    ],
+    "notes": [
+      "Rollout percentages will be increased weekly based on success metrics",
+      "Automatic rollback triggers configured for safety",
+      "Comprehensive monitoring and alerting in place",
+      "User feedback collection enabled throughout rollout"
+    ]
+  }
+}

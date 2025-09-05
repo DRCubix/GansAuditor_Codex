@@ -1,0 +1,17 @@
+{
+  "id": "audit-test-session",
+  "config": {
+    "task": "Security vulnerability assessment",
+    "scope": "diff",
+    "threshold": 85,
+    "maxCycles": 3,
+    "candidates": 1,
+    "judges": [
+      "internal"
+    ],
+    "applyFixes": false
+  },
+  "history": [],
+  "createdAt": 1757024691767,
+  "updatedAt": 1757024692767
+}
