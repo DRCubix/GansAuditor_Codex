@@ -351,9 +351,7 @@ export class ProjectContextAnalyzer {
 
       return context;
     } catch (error) {
-      logger.error('Failed to analyze project context', { 
-        error: error instanceof Error ? error.message : String(error) 
-      });
+      logger.error('Failed to analyze project context', error instanceof Error ? error : new Error(String(error)));
       throw error;
     }
   }
@@ -875,7 +873,7 @@ export class ProjectContextAnalyzer {
     try {
       const fs = await import('fs/promises');
       
-      async function walkDir(dir: string): Promise<void> {
+      const walkDir = async (dir: string): Promise<void> => {
         const entries = await fs.readdir(dir, { withFileTypes: true });
         
         for (const entry of entries) {
@@ -892,7 +890,7 @@ export class ProjectContextAnalyzer {
             }
           }
         }
-      }
+      };
       
       await walkDir.call(this, this.config.rootDirectory);
     } catch (error) {

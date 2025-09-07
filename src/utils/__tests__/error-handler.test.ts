@@ -15,7 +15,6 @@ import {
   withGracefulDegradation,
   createErrorResponse,
   handleConfigError,
-  handleCodexError,
   handleFileSystemError,
   handleSessionError,
 } from '../error-handler.js';
@@ -215,7 +214,7 @@ describe('GansAuditor_Codex Error Handler', () => {
       expect(error.category).toBe('session');
       expect(error.severity).toBe('medium');
       expect(error.recovery_strategy).toBe('fallback');
-      expect(error.context.reason).toBe('Invalid JSON structure');
+      expect(error.context.corruptionType).toBe('Invalid JSON structure');
     });
 
     it('should handle session persistence error', () => {
@@ -262,10 +261,8 @@ describe('GansAuditor_Codex Error Handler', () => {
         message: 'Using default configuration'
       });
       
-      expect(ErrorRecovery.createFallbackData(codexError)).toEqual({
-        fallbackAudit: true,
-        message: 'Audit completed with limited functionality'
-      });
+      // Codex errors should now throw instead of returning fallback data
+      expect(() => ErrorRecovery.createFallbackData(codexError)).toThrow();
       
       expect(ErrorRecovery.createFallbackData(fsError)).toEqual({
         partialData: true,
@@ -406,13 +403,14 @@ describe('GansAuditor_Codex Error Handler', () => {
       expect(result).toEqual(DEFAULT_GANSAUDITOR_CODEX_SESSION_CONFIG);
     });
 
-    it('should handle Codex errors with fallback audit', async () => {
+    it('should handle Codex errors by throwing (no fallback)', async () => {
       const error = new CodexNotAvailableError();
-      const result = await handleCodexError(error);
       
-      expect(result.verdict).toBe('revise');
-      expect(result.overall).toBe(50);
-      expect(result.judge_cards[0].model).toBe('fallback');
+      // Codex errors should now throw instead of returning fallback audit
+      await expect(async () => {
+        const errorHandler = new ErrorHandler();
+        await errorHandler.handleError(error, 'test-context');
+      }).rejects.toThrow();
     });
 
     it('should handle file system errors gracefully', async () => {

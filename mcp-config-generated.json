@@ -1,0 +1,15 @@
+{
+  "mcpServers": {
+    "gansauditor-codex": {
+      "command": "node",
+      "args": ["/home/boldog/GansAuditor/dist/index.js"],
+      "env": {
+        "ENABLE_GAN_AUDITING": "true",
+        "ENABLE_SYNCHRONOUS_AUDIT": "true",
+        "DISABLE_THOUGHT_LOGGING": "false"
+      },
+      "disabled": false,
+      "autoApprove": ["gansauditor_codex"]
+    }
+  }
+}

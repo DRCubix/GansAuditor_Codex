@@ -170,7 +170,7 @@ export declare class PromptResourceManager extends EventEmitter {
         temporaryArtifacts: number;
         lastCleanupDuration: number;
         memoryUsage: ResourceMetrics['memoryUsage'];
-        resourceLimitStatus: ReturnType<typeof this.checkResourceLimits>;
+        resourceLimitStatus: any;
     };
     /**
      * Destroy resource manager and cleanup all resources

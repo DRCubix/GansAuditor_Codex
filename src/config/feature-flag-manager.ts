@@ -359,8 +359,10 @@ export class FeatureFlagManager {
         ...this.flags[flagName],
         ...updates,
         metadata: {
-          ...this.flags[flagName].metadata,
+          createdAt: this.flags[flagName].metadata?.createdAt || new Date().toISOString(),
           updatedAt: new Date().toISOString(),
+          createdBy: this.flags[flagName].metadata?.createdBy,
+          tags: this.flags[flagName].metadata?.tags,
         },
       };
       this.clearCache();

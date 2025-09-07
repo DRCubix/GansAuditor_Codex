@@ -9,8 +9,10 @@
  * - 7.5: Structured error responses with actionable suggestions
  */
 import type { GanAuditorError, ErrorCategory, StructuredErrorResponse } from '../types/error-types.js';
+import { type ExecutionContext, type CodexDiagnostic } from './error-diagnostic-system.js';
+import { type InstallationGuidance, type VersionInfo } from './installation-guidance.js';
 import { type LogLevel } from './logger.js';
-import type { GanReview, SessionConfig } from '../types/gan-types.js';
+import type { SessionConfig } from '../types/gan-types.js';
 /**
  * Configuration for error handling behavior
  */
@@ -66,6 +68,13 @@ export declare class ErrorHandler {
      */
     createErrorResponse(error: unknown, context: string, fallbackData?: any): StructuredErrorResponse;
     /**
+     * Create comprehensive diagnostic response for Codex errors
+     */
+    createDiagnosticResponse(error: unknown, executionContext: ExecutionContext): Promise<{
+        diagnostic: CodexDiagnostic;
+        structuredResponse: StructuredErrorResponse;
+    }>;
+    /**
      * Aggregate multiple errors into a summary
      */
     aggregateErrors(errors: unknown[]): {
@@ -94,10 +103,6 @@ export declare class ErrorHandler {
      * Create fallback configuration
      */
     private createFallbackConfig;
-    /**
-     * Create fallback audit result
-     */
-    private createFallbackAuditResult;
     /**
      * Create fallback session data
      */
@@ -152,13 +157,41 @@ export declare function withTimeout<T>(operation: () => Promise<T>, timeoutMs: n
  */
 export declare function createErrorResponse(error: unknown, context: string, fallbackData?: any): StructuredErrorResponse;
 /**
+ * Create comprehensive diagnostic response for Codex errors
+ */
+export declare function createDiagnosticResponse(error: unknown, executionContext: ExecutionContext): Promise<{
+    diagnostic: CodexDiagnostic;
+    structuredResponse: StructuredErrorResponse;
+}>;
+/**
+ * Generate comprehensive installation guidance for Codex CLI
+ */
+export declare function getInstallationGuidance(): Promise<InstallationGuidance>;
+/**
+ * Check Codex CLI version compatibility
+ */
+export declare function getVersionCompatibility(): Promise<VersionInfo>;
+/**
+ * Create troubleshooting guide for common issues
+ */
+export declare function getTroubleshootingGuide(): Promise<{
+    commonIssues: Array<{
+        issue: string;
+        symptoms: string[];
+        solutions: string[];
+        prevention: string[];
+    }>;
+    diagnosticCommands: Array<{
+        command: string;
+        purpose: string;
+        expectedOutput: string;
+    }>;
+    emergencyRecovery: string[];
+}>;
+/**
  * Handle configuration errors with appropriate fallbacks
  */
 export declare function handleConfigError(error: unknown, defaultConfig: SessionConfig): Promise<SessionConfig>;
-/**
- * Handle Codex errors with fallback audit results
- */
-export declare function handleCodexError(error: unknown, context?: string): Promise<GanReview>;
 /**
  * Handle file system errors with graceful skipping
  */

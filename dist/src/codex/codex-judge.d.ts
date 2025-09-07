@@ -1,21 +1,28 @@
 /**
- * Codex CLI integration for GAN auditing
+ * Production Codex CLI integration for GAN auditing
  *
- * This module implements the CodexJudge class that executes Codex CLI commands
- * for code analysis and audit feedback generation.
+ * This module implements the production-ready CodexJudge class that executes
+ * Codex CLI commands for code analysis and audit feedback generation.
  *
- * Requirements: 7.1, 7.2, 7.3, 7.4, 7.5
+ * This implementation removes all mock functionality and fallback responses,
+ * using robust process management and comprehensive error handling.
+ *
+ * Requirements: 1.1, 1.2, 1.3, 1.4, 1.5
  */
 import type { ICodexJudge } from '../types/integration-types.js';
 import type { AuditRequest, GanReview } from '../types/gan-types.js';
 /**
- * Configuration for Codex CLI execution
+ * Configuration for production Codex CLI execution
  */
 export interface CodexJudgeConfig {
     executable: string;
     timeout: number;
     retries: number;
     workingDirectory?: string;
+    maxConcurrentProcesses: number;
+    processCleanupTimeout: number;
+    enableDebugLogging: boolean;
+    failFast: boolean;
 }
 /**
  * Workflow step result structure
@@ -79,30 +86,37 @@ export declare class CodexResponseError extends Error {
     constructor(message: string, rawResponse?: string | undefined);
 }
 /**
- * Implementation of Codex CLI integration for GAN auditing
+ * Production implementation of Codex CLI integration for GAN auditing
  *
- * Requirement 7.1: Execute Codex CLI commands in headless mode
- * Requirement 7.2: Handle errors gracefully with fallback responses
- * Requirement 7.3: Parse JSON responses and validate structure
- * Requirement 7.4: Attempt greedy parsing for malformed responses
- * Requirement 7.5: Provide clear error messages for unavailable Codex
+ * This implementation completely removes all mock functionality and fallback responses.
+ * It uses robust process management, comprehensive error handling, and strict validation.
  *
- * Enhanced for prompt-driven auditing (Requirements 6.2):
- * - Structured prompt generation with system prompt injection
- * - Workflow step result parsing from Codex responses
- * - Response validation for prompt-driven outputs
+ * Requirements:
+ * - 1.1: Execute actual Codex CLI without any mock fallback
+ * - 1.2: Return proper error responses instead of mock data
+ * - 1.5: Never use mock data under any circumstances
  */
 export declare class CodexJudge implements ICodexJudge {
     private readonly config;
+    private readonly processManager;
+    private readonly environmentManager;
+    private readonly codexValidator;
+    private readonly componentLogger;
+    private isInitialized;
     constructor(config?: Partial<CodexJudgeConfig>);
     /**
-     * Execute audit using Codex CLI
-     * Requirement 7.1: Execute Codex CLI commands in headless mode
+     * Execute audit using Codex CLI with production-ready process management
+     * Requirements: 1.1, 1.2, 1.5 - Execute actual Codex CLI without any mock fallback
      */
     executeAudit(request: AuditRequest): Promise<GanReview>;
     /**
-     * Check if Codex CLI is available
-     * Requirement 7.5: Provide clear error messages for unavailable Codex
+     * Ensure the system is initialized and Codex CLI is available
+     * Requirements: 1.3, 1.4 - Validate Codex CLI before accepting requests
+     */
+    private ensureInitialized;
+    /**
+     * Check if Codex CLI is available (simplified interface)
+     * Requirements: 1.3, 1.4 - Comprehensive availability checking
      */
     isAvailable(): Promise<boolean>;
     /**
@@ -110,141 +124,141 @@ export declare class CodexJudge implements ICodexJudge {
      */
     getVersion(): Promise<string | null>;
     /**
-     * Execute Codex CLI command with audit request
-     * Requirement 7.1: Execute Codex CLI commands in headless mode
+     * Get active process count from process manager
+     * Requirements: 6.1 - Process management integration
      */
-    private executeCodexCommand;
+    getActiveProcessCount(): number;
     /**
-     * Generate structured audit prompt for Codex CLI
-     * Requirement 7.2: Implement audit prompt generation with structured rubric and context
+     * Terminate all active processes
+     * Requirements: 6.2, 6.4 - Proper cleanup mechanisms
+     */
+    terminateAllProcesses(): Promise<void>;
+    /**
+     * Get health status from process manager
+     * Requirements: 6.5 - Health monitoring
+     */
+    getHealthStatus(): import("./process-manager.js").ProcessHealthStatus;
+    /**
+     * Execute Codex CLI command using ProcessManager
+     * Requirements: 1.1, 1.3 - Reliable execution with proper process management
+     */
+    private executeCodexCommandWithProcessManager;
+    /**
+     * Generate structured audit prompt for Codex CLI with proper input validation
+     * Requirements: 1.1, 1.3 - Fix command argument generation for reliable execution
      */
     private generateAuditPrompt;
     /**
-     * Parse and validate Codex CLI response
-     * Requirement 7.3: Parse JSON responses and validate structure
-     * Requirement 7.4: Attempt greedy parsing for malformed responses
+     * Validate audit request parameters
+     * Requirements: 1.1, 1.3 - Add proper input handling and validation
+     */
+    private validateAuditRequest;
+    /**
+     * Sanitize input to prevent command injection and formatting issues
+     * Requirements: 1.1, 1.3 - Proper input handling and validation
+     */
+    private sanitizeInput;
+    /**
+     * Format rubric dimensions for prompt
+     */
+    private formatRubricDimensions;
+    /**
+     * Generate dimension template for JSON response
+     */
+    private generateDimensionTemplate;
+    /**
+     * Parse and validate Codex CLI response with strict validation
+     * Requirements: 1.2, 4.1, 4.5 - Strict response validation without fallbacks
      */
     private parseCodexResponse;
     /**
-     * Attempt greedy parsing for malformed JSON responses
-     * Requirement 7.4: Attempt greedy parsing for malformed responses
+     * Parse Codex CLI JSONL (JSON Lines) format with strict validation
+     * Requirements: 1.2, 4.1 - Strict response validation without fallbacks
      */
-    private greedyJsonParse;
+    private parseCodexJsonLines;
     /**
-     * Validate and normalize parsed response
-     * Requirement 7.3: Parse JSON responses and validate structure
+     * Extract JSON from natural language response with strict validation
+     * Requirements: 1.2, 4.1, 4.5 - Remove greedy parsing fallbacks that mask errors
+     */
+    private extractJsonFromNaturalLanguage;
+    /**
+     * Validate if response has required Codex format
+     * Requirements: 1.2, 4.1 - Strict response validation without fallbacks
+     */
+    private isValidCodexResponse;
+    /**
+     * Validate and normalize parsed response with strict validation
+     * Requirements: 1.2, 4.1, 4.5 - Comprehensive JSON parsing with proper error handling
      */
     private validateAndNormalizeResponse;
     /**
-     * Validate score value (0-100)
+     * Validate score value (0-100) with strict error collection
      */
     private validateScore;
     /**
-     * Validate verdict value
+     * Validate verdict value with strict error collection
      */
     private validateVerdict;
     /**
-     * Validate dimensional scores
+     * Validate dimensional scores with strict error collection
      */
     private validateDimensions;
     /**
-     * Validate review details
+     * Validate review details with strict error collection
      */
     private validateReview;
+    /**
+     * Validate iterations with strict error collection
+     */
+    private validateIterations;
     /**
      * Validate inline comment structure
      */
     private isValidInlineComment;
     /**
-     * Validate judge cards
+     * Validate judge cards with strict error collection
      */
     private validateJudgeCards;
     /**
-     * Create fallback response for error scenarios
-     * Requirement 7.2: Handle errors gracefully with fallback responses
+     * Create default dimensions
      */
-    private createFallbackResponse;
+    private createDefaultDimensions;
     /**
-     * Execute command with timeout and input support
+     * Create default review
      */
-    private executeCommand;
+    private createDefaultReview;
+    /**
+     * Create default judge cards
+     */
+    private createDefaultJudgeCards;
+    /**
+     * Create enhanced error with diagnostic information
+     * Requirements: 4.1, 4.2 - Comprehensive error handling with actionable guidance
+     */
+    private createEnhancedError;
     /**
      * Utility function for delays
      */
     private delay;
     /**
-     * Execute audit with structured system prompt injection
-     * Requirement 6.2: Implement prompt template injection into Codex requests
+     * Execute audit with system prompt - Not supported in production mode
+     * Requirements: 5.1, 5.3, 5.5 - Remove all fallback functionality
      */
-    executeAuditWithSystemPrompt(request: AuditRequest, systemPrompt: string, promptContext?: {
-        variables: Record<string, any>;
-        metadata: any;
-    }): Promise<GanReview>;
+    executeAuditWithSystemPrompt(): Promise<never>;
     /**
-     * Parse workflow step results from Codex response
-     * Requirement 6.2: Add workflow step result parsing from Codex responses
+     * Parse workflow step results - Not supported in production mode
+     * Requirements: 5.1, 5.3, 5.5 - Remove all fallback functionality
      */
-    parseWorkflowStepResults(rawResponse: string): WorkflowStepResults;
+    parseWorkflowStepResults(): never;
     /**
-     * Validate response structure for prompt-driven outputs
-     * Requirement 6.2: Create response validation for prompt-driven outputs
+     * Validate prompt-driven response - Not supported in production mode
+     * Requirements: 5.1, 5.3, 5.5 - Remove all fallback functionality
      */
-    validatePromptDrivenResponse(response: any, expectedStructure?: PromptResponseStructure): ValidationResult;
+    validatePromptDrivenResponse(): never;
     /**
-     * Generate structured audit prompt with system prompt integration
-     * Requirement 6.2: Extend CodexJudge to support structured prompt generation
+     * Generate structured audit prompt - Not supported in production mode
+     * Requirements: 5.1, 5.3, 5.5 - Remove all fallback functionality
      */
-    generateStructuredAuditPrompt(request: AuditRequest, systemPrompt: string, promptContext?: {
-        variables: Record<string, any>;
-        metadata: any;
-    }): string;
-    /**
-     * Execute Codex CLI command with system prompt injection
-     */
-    private executeCodexCommandWithPrompt;
-    /**
-     * Parse Codex response with prompt-specific validation
-     */
-    private parseCodexResponseWithPromptValidation;
-    /**
-     * Validate and normalize parsed response with prompt enhancements
-     */
-    private validateAndNormalizePromptResponse;
-    /**
-     * Create prompt-aware fallback response
-     */
-    private createPromptAwareFallbackResponse;
-    /**
-     * Parse workflow steps with greedy parsing for malformed responses
-     */
-    private parseWorkflowStepsGreedy;
-    /**
-     * Validate workflow step structure
-     */
-    private isValidWorkflowStep;
-    /**
-     * Parse step issues from raw data
-     */
-    private parseStepIssues;
-    /**
-     * Calculate workflow score from step results
-     */
-    private calculateWorkflowScore;
-    /**
-     * Extract evidence from text using pattern matching
-     */
-    private extractEvidenceFromText;
-    /**
-     * Extract issues from text using pattern matching
-     */
-    private extractIssuesFromText;
-    /**
-     * Extract score from text using pattern matching
-     */
-    private extractScoreFromText;
-    /**
-     * Validate GAN review structure
-     */
-    private isValidGanReview;
+    generateStructuredAuditPrompt(): never;
 }
 //# sourceMappingURL=codex-judge.d.ts.map

@@ -6,7 +6,6 @@
  */
 import { SystemPromptManager } from './system-prompt-manager.js';
 import { createComponentLogger } from '../utils/logger.js';
-import { withGracefulDegradation, } from '../utils/error-handler.js';
 /**
  * Prompt-driven GAN Auditor
  *
@@ -37,8 +36,7 @@ export class PromptDrivenGanAuditor {
      */
     async auditThought(thought, sessionId) {
         if (!this.config.enableSystemPrompt) {
-            // Fallback to base auditor when system prompt is disabled
-            return await this.baseAuditor.auditThought(thought, sessionId);
+            throw new Error('System prompt is disabled - cannot perform audit without system prompt');
         }
         try {
             this.componentLogger.info(`Starting prompt-driven audit for thought ${thought.thoughtNumber}`, {
@@ -47,8 +45,8 @@ export class PromptDrivenGanAuditor {
             });
             // Get session state for context
             const session = sessionId ? await this.getSessionState(sessionId) : undefined;
-            // Render system prompt with context
-            const renderedPrompt = await withGracefulDegradation(() => this.renderSystemPromptWithContext(thought, session), () => this.createFallbackPrompt(thought, session), 'system-prompt-rendering');
+            // Render system prompt with context - fail fast on errors
+            const renderedPrompt = await this.renderSystemPromptWithContext(thought, session);
             // Execute audit with enhanced context
             const auditResult = await this.executePromptEnhancedAudit(thought, session, renderedPrompt.result);
             // Process response with completion analysis
@@ -69,8 +67,8 @@ export class PromptDrivenGanAuditor {
         }
         catch (error) {
             this.componentLogger.error('Prompt-driven audit failed, falling back to base auditor', error, { thoughtNumber: thought.thoughtNumber, sessionId });
-            // Fallback to base auditor on error
-            return await this.baseAuditor.auditThought(thought, sessionId);
+            // Re-throw the error - no fallback available
+            throw error;
         }
     }
     /**
@@ -129,24 +127,7 @@ export class PromptDrivenGanAuditor {
         // Render system prompt
         return await this.systemPromptManager.renderSystemPrompt(thought, session, projectContext);
     }
-    /**
-     * Create fallback prompt for error scenarios
-     */
-    async createFallbackPrompt(thought, session) {
-        return {
-            content: `# Fallback System Prompt\n\nYou are an AI code auditor. Review the provided code for quality, correctness, and best practices.\n\nProvide structured feedback with scores and actionable recommendations.`,
-            variables: {
-                MODEL_CONTEXT_TOKENS: 200000,
-                AUDIT_TIMEOUT_MS: 30000,
-                CURRENT_LOOP: session?.currentLoop || 0,
-            },
-            metadata: {
-                version: 'fallback',
-                renderedAt: Date.now(),
-                configHash: 'fallback',
-            },
-        };
-    }
+    // createFallbackPrompt method removed - production code must fail fast on errors
     /**
      * Execute audit with enhanced prompt context
      */

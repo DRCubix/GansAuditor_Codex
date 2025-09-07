@@ -342,9 +342,7 @@ export class DeveloperPatternRecognizer {
 
       return profile;
     } catch (error) {
-      logger.error('Failed to analyze developer patterns', { 
-        error: error instanceof Error ? error.message : String(error) 
-      });
+      logger.error('Failed to analyze developer patterns', error instanceof Error ? error : new Error(String(error)));
       throw error;
     }
   }
@@ -407,9 +405,7 @@ export class DeveloperPatternRecognizer {
         suggestedImprovements
       };
     } catch (error) {
-      logger.error('Failed to adapt feedback', { 
-        error: error instanceof Error ? error.message : String(error) 
-      });
+      logger.error('Failed to adapt feedback', error instanceof Error ? error : new Error(String(error)));
       
       // Return original feedback if adaptation fails
       return {

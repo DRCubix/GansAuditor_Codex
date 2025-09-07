@@ -422,29 +422,52 @@ Customize audit behavior with gan-config blocks:
 
 ## Installation
 
-1. **Build the server**:
+### Prerequisites
+
+**CRITICAL**: Codex CLI must be installed and available before starting the server. The system will fail fast if Codex CLI is not properly configured.
+
+1. **Install and verify Codex CLI**:
+   ```bash
+   # Install Codex CLI (follow official installation guide)
+   codex --version
+   # Should display version without errors
+   
+   # Test basic functionality
+   codex exec "console.log('test')"
+   # Should execute successfully
+   ```
+
+2. **Build the server**:
    ```bash
    cd /path/to/GansAuditor
+   
+   # Validate Codex CLI integration
+   npm run validate:codex
+   
+   # Build the server
    npm run build
    ```
 
-2. **Test the server**:
+3. **Test the server**:
    ```bash
    node dist/index.js
    # Should show: "GansAuditor_Codex MCP Server running on stdio"
+   # Will fail immediately if Codex CLI is not available
    ```
 
-3. **Add to MCP configuration** (see examples above)
+4. **Add to MCP configuration** (see examples above)
 
-4. **Restart your MCP client** to load the new server
+5. **Restart your MCP client** to load the new server
 
 ## Troubleshooting
 
 ### General Issues
+- **Server fails to start**: Most commonly due to missing Codex CLI. Run `codex --version` to verify installation
 - **Server hangs**: This is normal - MCP servers wait for JSON-RPC input
-- **No audit results**: Ensure `ENABLE_GAN_AUDITING=true` is set
+- **No audit results**: Ensure `ENABLE_GAN_AUDITING=true` is set and Codex CLI is working
 - **Connection issues**: Check the path to `dist/index.js` is correct
 - **Permission errors**: Ensure the server files are executable
+- **Codex CLI errors**: Check Codex CLI configuration and API access
 
 ### Synchronous Workflow Issues
 

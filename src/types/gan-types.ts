@@ -239,6 +239,25 @@ export interface GansAuditorCodexSessionState {
   updatedAt: number;
   
   // ============================================================================
+  // Codex Failure Tracking (Requirements 4.1, 4.5)
+  // ============================================================================
+  
+  /** Track Codex CLI failures for diagnostic purposes */
+  codexFailures?: Array<{
+    timestamp: number;
+    thoughtNumber: number;
+    errorType: string;
+    errorMessage: string;
+    context: Record<string, any>;
+  }>;
+  
+  /** Flag indicating if session has experienced Codex issues */
+  hasCodexIssues?: boolean;
+  
+  /** Timestamp of last Codex failure */
+  lastCodexFailure?: number;
+  
+  // ============================================================================
   // Prompt-Driven Audit Extensions (Requirements 6.1, 6.2, 6.3)
   // ============================================================================
   

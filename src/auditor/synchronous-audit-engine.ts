@@ -355,7 +355,7 @@ export class SynchronousAuditEngine {
       timer.endWithError(error as Error);
 
       this.componentLogger.error(
-        `Synchronous audit failed with unexpected error`, 
+        `Synchronous audit failed - no fallback available`, 
         error as Error, 
         {
           thoughtNumber: thought.thoughtNumber,
@@ -364,17 +364,8 @@ export class SynchronousAuditEngine {
         }
       );
 
-      // Create fallback result for unexpected errors
-      const fallbackReview = this.createFallbackReview(error as Error, false);
-
-      return {
-        review: fallbackReview,
-        success: false,
-        timedOut: false,
-        duration,
-        error: (error as Error).message,
-        sessionId,
-      };
+      // Re-throw the error - no fallback responses in production
+      throw error;
     }
   }
 
@@ -637,42 +628,7 @@ export class SynchronousAuditEngine {
     };
   }
 
-  /**
-   * Create fallback review for error scenarios
-   * 
-   * Requirement 1.4: Error handling for audit failures and timeouts
-   */
-  private createFallbackReview(error: Error, isTimeout: boolean): GansAuditorCodexReview {
-    const fallbackScore = 50; // Neutral score for error cases
-    const errorType = isTimeout ? 'timeout' : 'failure';
-    const errorMessage = isTimeout 
-      ? `Audit timed out after ${this.config.auditTimeout}ms. Please review the code manually and ensure all dependencies are properly configured.`
-      : `Audit failed due to an error: ${error.message}. Please review the code manually and ensure all dependencies are properly configured.`;
-
-    return {
-      overall: fallbackScore,
-      dimensions: [
-        { name: 'accuracy', score: fallbackScore },
-        { name: 'completeness', score: fallbackScore },
-        { name: 'clarity', score: fallbackScore },
-        { name: 'actionability', score: fallbackScore },
-        { name: 'human_likeness', score: fallbackScore },
-      ],
-      verdict: 'revise',
-      review: {
-        summary: errorMessage,
-        inline: [],
-        citations: [],
-      },
-      proposed_diff: null,
-      iterations: 1,
-      judge_cards: [{
-        model: 'synchronous-audit-engine-fallback',
-        score: fallbackScore,
-        notes: `Fallback response due to audit ${errorType}: ${error.message}`,
-      }],
-    };
-  }
+  // createFallbackReview method removed - production code must fail fast on errors
 
   // ============================================================================
   // Error Handling Methods (Requirements 7.1-7.4)
@@ -831,8 +787,8 @@ export class SynchronousAuditEngine {
     thought: GansAuditorCodexThoughtData,
     sessionId: string | undefined,
     duration: number
-  ): Promise<SynchronousAuditResult> {
-    this.componentLogger.error('Audit service unavailable', error as Error, {
+  ): Promise<never> {
+    this.componentLogger.error('Audit service unavailable - no fallback available', error as Error, {
       thoughtNumber: thought.thoughtNumber,
       sessionId,
       duration,
@@ -843,16 +799,8 @@ export class SynchronousAuditEngine {
       (error as Error).message
     );
 
-    const result = await handleAuditServiceUnavailable(serviceError, 'GAN Auditor Service');
-
-    return {
-      review: result.fallbackAudit || this.createFallbackReview(error as Error, false),
-      success: false,
-      timedOut: false,
-      duration,
-      error: serviceError.message,
-      sessionId,
-    };
+    // Re-throw the error - no fallback responses in production
+    throw serviceError;
   }
 
   /**
@@ -880,21 +828,8 @@ export class SynchronousAuditEngine {
       'audit'
     );
 
-    const result = await handleAuditTimeout(
-      timeoutError,
-      this.config.auditTimeout,
-      partialResults,
-      completionPercentage
-    );
-
-    return {
-      review: result.partialAudit || this.createFallbackReview(error as Error, true),
-      success: false,
-      timedOut: true,
-      duration,
-      error: timeoutError.message,
-      sessionId,
-    };
+    // Re-throw the timeout error - no fallback responses in production
+    throw timeoutError;
   }
 
   /**
@@ -905,23 +840,15 @@ export class SynchronousAuditEngine {
     thought: GansAuditorCodexThoughtData,
     sessionId: string | undefined,
     duration: number
-  ): Promise<SynchronousAuditResult> {
-    this.componentLogger.error('Generic audit error', error as Error, {
+  ): Promise<never> {
+    this.componentLogger.error('Generic audit error - no fallback available', error as Error, {
       thoughtNumber: thought.thoughtNumber,
       sessionId,
       duration,
     });
 
-    const fallbackReview = this.createFallbackReview(error as Error, false);
-
-    return {
-      review: fallbackReview,
-      success: false,
-      timedOut: false,
-      duration,
-      error: (error as Error).message,
-      sessionId,
-    };
+    // Re-throw the error - no fallback responses in production
+    throw error;
   }
 
   /**

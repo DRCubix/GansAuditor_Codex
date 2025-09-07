@@ -491,6 +491,120 @@ export class SessionManager implements IGansAuditorCodexSessionManager {
   }
 
   /**
+   * Record Codex failure in session state
+   * Requirements: 4.1, 4.5 - Handle Codex failures properly without fallbacks
+   */
+  public async recordCodexFailure(
+    sessionId: string,
+    thoughtNumber: number,
+    error: Error,
+    context?: Record<string, any>
+  ): Promise<void> {
+    try {
+      const session = await this.getSession(sessionId);
+      if (!session) {
+        throw new SessionNotFoundError(sessionId);
+      }
+
+      // Add failure information to session metadata
+      if (!session.codexFailures) {
+        session.codexFailures = [];
+      }
+
+      session.codexFailures.push({
+        timestamp: Date.now(),
+        thoughtNumber,
+        errorType: error.constructor.name,
+        errorMessage: error.message,
+        context: context || {},
+      });
+
+      // Mark session as having Codex issues
+      session.hasCodexIssues = true;
+      session.lastCodexFailure = Date.now();
+      session.updatedAt = Date.now();
+
+      await this.updateSession(session);
+      this.componentLogger.warn(`Recorded Codex failure for session ${sessionId}`, { 
+        thoughtNumber, 
+        errorType: error.constructor.name,
+        errorMessage: error.message
+      });
+    } catch (updateError) {
+      this.componentLogger.error(`Failed to record Codex failure for session ${sessionId}`, updateError as Error);
+      // Don't throw here - failure to record failure shouldn't break the main flow
+    }
+  }
+
+  /**
+   * Check if session has recent Codex failures
+   * Requirements: 4.1, 4.5 - Track Codex failure patterns
+   */
+  public async hasRecentCodexFailures(sessionId: string, withinMinutes: number = 10): Promise<boolean> {
+    try {
+      const session = await this.getSession(sessionId);
+      if (!session || !session.lastCodexFailure) {
+        return false;
+      }
+
+      const cutoffTime = Date.now() - (withinMinutes * 60 * 1000);
+      return session.lastCodexFailure > cutoffTime;
+    } catch (error) {
+      this.componentLogger.warn(`Failed to check recent Codex failures for session ${sessionId}`, error as Error);
+      return false;
+    }
+  }
+
+  /**
+   * Get Codex failure summary for session
+   * Requirements: 4.1, 4.5 - Provide diagnostic information for Codex failures
+   */
+  public async getCodexFailureSummary(sessionId: string): Promise<{
+    totalFailures: number;
+    recentFailures: number;
+    lastFailureTime?: number;
+    commonErrorTypes: string[];
+  }> {
+    try {
+      const session = await this.getSession(sessionId);
+      if (!session || !session.codexFailures) {
+        return {
+          totalFailures: 0,
+          recentFailures: 0,
+          commonErrorTypes: [],
+        };
+      }
+
+      const recentCutoff = Date.now() - (10 * 60 * 1000); // 10 minutes
+      const recentFailures = session.codexFailures.filter(f => f.timestamp > recentCutoff);
+      
+      const errorTypeCounts = session.codexFailures.reduce((acc, failure) => {
+        acc[failure.errorType] = (acc[failure.errorType] || 0) + 1;
+        return acc;
+      }, {} as Record<string, number>);
+
+      const commonErrorTypes = Object.entries(errorTypeCounts)
+        .sort(([, a], [, b]) => b - a)
+        .slice(0, 3)
+        .map(([type]) => type);
+
+      return {
+        totalFailures: session.codexFailures.length,
+        recentFailures: recentFailures.length,
+        lastFailureTime: session.lastCodexFailure,
+        commonErrorTypes,
+      };
+    } catch (error) {
+      this.componentLogger.warn(`Failed to get Codex failure summary for session ${sessionId}`, error as Error);
+      return {
+        totalFailures: 0,
+        recentFailures: 0,
+        commonErrorTypes: [],
+      };
+    }
+  }
+
+  /**
    * Clean up old or corrupted sessions
    * Requirement 3.5: Session cleanup
    */

@@ -19,6 +19,10 @@ export * from './metrics-collector.js';
 export * from './health-checker.js';
 export * from './debug-tools.js';
 export * from './audit-logger.js';
+export * from './codex-operation-logger.js';
+export * from './codex-performance-metrics.js';
+export * from './codex-health-monitor.js';
+export * from './codex-monitoring-integration.js';
 
 // Re-export commonly used types
 export type {
@@ -55,11 +59,39 @@ export type {
   AuditLoggerConfig,
 } from './audit-logger.js';
 
+export type {
+  CodexOperationType,
+  CodexOperationLogEntry,
+  CodexCommandSummary,
+  CodexOperationStatistics,
+  CodexOperationLoggerConfig,
+} from './codex-operation-logger.js';
+
+export type {
+  CodexExecutionMetrics,
+  CodexResourceMetrics,
+  CodexReliabilityMetrics,
+  CodexThroughputMetrics,
+  CodexPerformanceSnapshot,
+  CodexPerformanceConfig,
+} from './codex-performance-metrics.js';
+
+export type {
+  CodexHealthStatus,
+  CodexHealthCheckResult,
+  CodexHealthReport,
+  CodexHealthAlert,
+  CodexHealthMonitorConfig,
+} from './codex-health-monitor.js';
+
 import { logger, createComponentLogger } from '../utils/logger.js';
 import { metricsCollector } from './metrics-collector.js';
 import { healthChecker, startHealthMonitoring, stopHealthMonitoring } from './health-checker.js';
 import { debugTools } from './debug-tools.js';
 import { auditLogger } from './audit-logger.js';
+import { codexOperationLogger } from './codex-operation-logger.js';
+import { codexPerformanceMetrics } from './codex-performance-metrics.js';
+import { codexHealthMonitor } from './codex-health-monitor.js';
 import type { SynchronousAuditEngine } from '../auditor/synchronous-audit-engine.js';
 import type { SynchronousSessionManager } from '../session/synchronous-session-manager.js';
 

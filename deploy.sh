@@ -33,6 +33,16 @@ log_error() {
 check_prerequisites() {
     log_info "Checking prerequisites..."
     
+    # Check Codex CLI first (CRITICAL REQUIREMENT)
+    log_info "Validating Codex CLI installation..."
+    if ! ./scripts/validate-codex-installation.sh --json >/dev/null 2>&1; then
+        log_error "Codex CLI validation failed"
+        log_error "Run './scripts/validate-codex-installation.sh' for detailed diagnosis"
+        log_error "GansAuditor_Codex requires Codex CLI to be properly installed"
+        exit 1
+    fi
+    log_success "Codex CLI validation passed"
+    
     # Check Node.js version
     if ! command -v node &> /dev/null; then
         log_error "Node.js is not installed. Please install Node.js 18+ first."
@@ -49,6 +59,15 @@ check_prerequisites() {
     if ! command -v npm &> /dev/null; then
         log_error "npm is not installed. Please install npm first."
         exit 1
+    fi
+    
+    # Run environment validation
+    log_info "Validating deployment environment..."
+    if ! ./scripts/validate-environment.sh --json >/dev/null 2>&1; then
+        log_warning "Environment validation found issues (non-critical)"
+        log_warning "Run './scripts/validate-environment.sh' for detailed diagnosis"
+    else
+        log_success "Environment validation passed"
     fi
     
     log_success "Prerequisites check passed"
@@ -80,7 +99,7 @@ build_project() {
 
 # Test the server
 test_server() {
-    log_info "Testing server startup..."
+    log_info "Testing server startup and functionality..."
     
     # Test basic server functionality
     timeout 5s node dist/index.js > /dev/null 2>&1 || {
@@ -91,6 +110,15 @@ test_server() {
             exit 1
         fi
     }
+    
+    # Run comprehensive health check
+    log_info "Running deployment health check..."
+    if ./scripts/deployment-health-check.sh --type local --json >/dev/null 2>&1; then
+        log_success "Deployment health check passed"
+    else
+        log_warning "Deployment health check found issues (non-critical for initial deployment)"
+        log_warning "Run './scripts/deployment-health-check.sh --type local' for detailed diagnosis"
+    fi
 }
 
 # Local deployment

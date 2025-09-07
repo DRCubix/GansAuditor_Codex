@@ -407,10 +407,10 @@ export class DeploymentManager {
                     version: workingVersion,
                     systemPrompt: currentConfig,
                     metadata: {
-                        ...configFile.metadata,
+                        createdAt: configFile.metadata?.createdAt || new Date().toISOString(),
                         updatedAt: new Date().toISOString(),
-                        migratedFrom: currentVersion,
-                        migrationsApplied,
+                        description: `Migrated from version ${currentVersion}. Applied migrations: ${migrationsApplied.join(', ')}`,
+                        author: configFile.metadata?.author,
                     },
                 };
                 writeFileSync(configPath, JSON.stringify(updatedConfigFile, null, 2), 'utf-8');

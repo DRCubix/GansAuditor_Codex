@@ -9,7 +9,7 @@ import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { GanAuditor, type GanAuditorConfig } from '../gan-auditor.js';
 import { SessionManager } from '../../session/session-manager.js';
 import { ContextPacker } from '../../context/context-packer.js';
-import { MockCodexJudge } from '../../codex/mock-codex-judge.js';
+import { MockCodexJudge } from '../../__tests__/mocks/mock-codex-judge.js';
 import type {
   ThoughtData,
   GanReview,

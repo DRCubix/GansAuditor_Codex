@@ -224,10 +224,7 @@ export class ComplexityAnalyzer {
 
       return metrics;
     } catch (error) {
-      logger.error('Failed to analyze code complexity', { 
-        error: error instanceof Error ? error.message : String(error),
-        filePath: context.filePath 
-      });
+      logger.error(`Failed to analyze code complexity for ${context.filePath}`, error instanceof Error ? error : new Error(String(error)));
       throw error;
     }
   }

@@ -237,11 +237,56 @@
         ]
       },
       "timestamp": 1757095815240
+    },
+    {
+      "thoughtNumber": 1,
+      "code": "\n        function testFunction() {\n          console.log(\"This is a test function with some content\");\n          return \"Hello, World!\";\n        }\n      ",
+      "auditResult": {
+        "overall": 85,
+        "dimensions": [
+          {
+            "name": "accuracy",
+            "score": 90
+          },
+          {
+            "name": "completeness",
+            "score": 80
+          },
+          {
+            "name": "clarity",
+            "score": 85
+          },
+          {
+            "name": "actionability",
+            "score": 85
+          },
+          {
+            "name": "human_likeness",
+            "score": 85
+          }
+        ],
+        "verdict": "pass",
+        "review": {
+          "summary": "Good implementation with room for improvement",
+          "inline": [],
+          "citations": []
+        },
+        "proposed_diff": null,
+        "iterations": 1,
+        "judge_cards": [
+          {
+            "model": "test-judge",
+            "score": 85,
+            "notes": "Test review with detailed feedback"
+          }
+        ]
+      },
+      "timestamp": 1757109764665
     }
   ],
   "currentLoop": 1,
   "isComplete": false,
   "codexContextActive": false,
   "createdAt": 1757033734248,
-  "updatedAt": 1757095815241
+  "updatedAt": 1757109764665
 }

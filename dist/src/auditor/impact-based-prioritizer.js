@@ -62,9 +62,7 @@ export class ImpactBasedPrioritizer {
             return prioritized;
         }
         catch (error) {
-            logger.error('Failed to prioritize suggestions', {
-                error: error instanceof Error ? error.message : String(error)
-            });
+            logger.error('Failed to prioritize suggestions', error instanceof Error ? error : new Error(String(error)));
             throw error;
         }
     }
@@ -89,9 +87,7 @@ export class ImpactBasedPrioritizer {
             };
         }
         catch (error) {
-            logger.error('Failed to generate improvement pathway', {
-                error: error instanceof Error ? error.message : String(error)
-            });
+            logger.error('Failed to generate improvement pathway', error instanceof Error ? error : new Error(String(error)));
             throw error;
         }
     }

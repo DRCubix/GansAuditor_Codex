@@ -7,7 +7,7 @@
  */
 import { GanAuditor } from './gan-auditor.js';
 import { createComponentLogger, createTimer } from '../utils/logger.js';
-import { withTimeout, handleAuditServiceUnavailable, handleAuditTimeout, handleInvalidCodeFormat, } from '../utils/error-handler.js';
+import { withTimeout, handleInvalidCodeFormat, } from '../utils/error-handler.js';
 import { AuditServiceUnavailableError, AuditTimeoutError, InvalidCodeFormatError, } from '../types/error-types.js';
 import { AuditCache } from './audit-cache.js';
 import { ProgressTracker, AuditStage } from './progress-tracker.js';
@@ -197,21 +197,13 @@ export class SynchronousAuditEngine {
         catch (error) {
             const duration = Date.now() - startTime;
             timer.endWithError(error);
-            this.componentLogger.error(`Synchronous audit failed with unexpected error`, error, {
+            this.componentLogger.error(`Synchronous audit failed - no fallback available`, error, {
                 thoughtNumber: thought.thoughtNumber,
                 sessionId,
                 duration,
             });
-            // Create fallback result for unexpected errors
-            const fallbackReview = this.createFallbackReview(error, false);
-            return {
-                review: fallbackReview,
-                success: false,
-                timedOut: false,
-                duration,
-                error: error.message,
-                sessionId,
-            };
+            // Re-throw the error - no fallback responses in production
+            throw error;
         }
     }
     /**
@@ -430,41 +422,7 @@ export class SynchronousAuditEngine {
                 }],
         };
     }
-    /**
-     * Create fallback review for error scenarios
-     *
-     * Requirement 1.4: Error handling for audit failures and timeouts
-     */
-    createFallbackReview(error, isTimeout) {
-        const fallbackScore = 50; // Neutral score for error cases
-        const errorType = isTimeout ? 'timeout' : 'failure';
-        const errorMessage = isTimeout
-            ? `Audit timed out after ${this.config.auditTimeout}ms. Please review the code manually and ensure all dependencies are properly configured.`
-            : `Audit failed due to an error: ${error.message}. Please review the code manually and ensure all dependencies are properly configured.`;
-        return {
-            overall: fallbackScore,
-            dimensions: [
-                { name: 'accuracy', score: fallbackScore },
-                { name: 'completeness', score: fallbackScore },
-                { name: 'clarity', score: fallbackScore },
-                { name: 'actionability', score: fallbackScore },
-                { name: 'human_likeness', score: fallbackScore },
-            ],
-            verdict: 'revise',
-            review: {
-                summary: errorMessage,
-                inline: [],
-                citations: [],
-            },
-            proposed_diff: null,
-            iterations: 1,
-            judge_cards: [{
-                    model: 'synchronous-audit-engine-fallback',
-                    score: fallbackScore,
-                    notes: `Fallback response due to audit ${errorType}: ${error.message}`,
-                }],
-        };
-    }
+    // createFallbackReview method removed - production code must fail fast on errors
     // ============================================================================
     // Error Handling Methods (Requirements 7.1-7.4)
     // ============================================================================
@@ -587,21 +545,14 @@ export class SynchronousAuditEngine {
      * Handle service unavailable error (Requirement 7.1)
      */
     async handleServiceUnavailableError(error, thought, sessionId, duration) {
-        this.componentLogger.error('Audit service unavailable', error, {
+        this.componentLogger.error('Audit service unavailable - no fallback available', error, {
             thoughtNumber: thought.thoughtNumber,
             sessionId,
             duration,
         });
         const serviceError = new AuditServiceUnavailableError('GAN Auditor Service', error.message);
-        const result = await handleAuditServiceUnavailable(serviceError, 'GAN Auditor Service');
-        return {
-            review: result.fallbackAudit || this.createFallbackReview(error, false),
-            success: false,
-            timedOut: false,
-            duration,
-            error: serviceError.message,
-            sessionId,
-        };
+        // Re-throw the error - no fallback responses in production
+        throw serviceError;
     }
     /**
      * Handle timeout error with partial results (Requirement 7.4)
@@ -614,34 +565,20 @@ export class SynchronousAuditEngine {
             completionPercentage,
         });
         const timeoutError = new AuditTimeoutError(this.config.auditTimeout, partialResults, completionPercentage, 'audit');
-        const result = await handleAuditTimeout(timeoutError, this.config.auditTimeout, partialResults, completionPercentage);
-        return {
-            review: result.partialAudit || this.createFallbackReview(error, true),
-            success: false,
-            timedOut: true,
-            duration,
-            error: timeoutError.message,
-            sessionId,
-        };
+        // Re-throw the timeout error - no fallback responses in production
+        throw timeoutError;
     }
     /**
      * Handle generic audit errors
      */
     async handleGenericAuditError(error, thought, sessionId, duration) {
-        this.componentLogger.error('Generic audit error', error, {
+        this.componentLogger.error('Generic audit error - no fallback available', error, {
             thoughtNumber: thought.thoughtNumber,
             sessionId,
             duration,
         });
-        const fallbackReview = this.createFallbackReview(error, false);
-        return {
-            review: fallbackReview,
-            success: false,
-            timedOut: false,
-            duration,
-            error: error.message,
-            sessionId,
-        };
+        // Re-throw the error - no fallback responses in production
+        throw error;
     }
     /**
      * Get performance statistics

@@ -92,10 +92,6 @@ export declare class PromptDrivenGanAuditor implements IGanAuditor {
      */
     private renderSystemPromptWithContext;
     /**
-     * Create fallback prompt for error scenarios
-     */
-    private createFallbackPrompt;
-    /**
      * Execute audit with enhanced prompt context
      */
     private executePromptEnhancedAudit;

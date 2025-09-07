@@ -22,7 +22,8 @@ describe('GansAuditor_Codex Main Module Exports', () => {
 
   it('should export Codex integration', () => {
     expect(typeof mainModule.CodexJudge).toBe('function');
-    expect(typeof mainModule.MockCodexJudge).toBe('function');
+    // MockCodexJudge is no longer exported from production code
+    expect(mainModule.MockCodexJudge).toBeUndefined();
   });
 
   it('should export GansAuditor_Codex orchestration', () => {

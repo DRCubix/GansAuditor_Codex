@@ -1,0 +1,27 @@
+{
+  "timestamp": 1757109763806,
+  "metrics": {
+    "configValidationCount": 0,
+    "configValidationErrors": 0,
+    "configValidationDuration": 0,
+    "configDeploymentCount": 0,
+    "configDeploymentErrors": 0,
+    "configDeploymentDuration": 0,
+    "migrationCount": 0,
+    "migrationErrors": 0,
+    "migrationDuration": 0,
+    "backupCount": 0,
+    "backupErrors": 0,
+    "featureFlagEvaluations": 0,
+    "featureFlagCacheHits": 0,
+    "featureFlagCacheMisses": 0,
+    "memoryUsage": 0,
+    "cpuUsage": 0,
+    "diskUsage": 0,
+    "auditSuccessRate": 0,
+    "auditAverageScore": 0,
+    "auditCompletionTime": 0,
+    "auditIterationCount": 0
+  },
+  "rawMetrics": {}
+}

@@ -398,7 +398,7 @@ export class PromptResourceManager extends EventEmitter {
     temporaryArtifacts: number;
     lastCleanupDuration: number;
     memoryUsage: ResourceMetrics['memoryUsage'];
-    resourceLimitStatus: ReturnType<typeof this.checkResourceLimits>;
+    resourceLimitStatus: any;
   } {
     const metrics = this.getResourceMetrics();
     const limitStatus = this.checkResourceLimits();
@@ -494,7 +494,7 @@ export class PromptResourceManager extends EventEmitter {
 
     // Emit critical alerts
     for (const critical of limitStatus.critical) {
-      this.componentLogger.error('Resource critical', { critical });
+      this.componentLogger.error('Resource critical', new Error(critical));
       this.emit('resourceCritical', critical, metrics);
     }
 

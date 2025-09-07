@@ -192,11 +192,56 @@
         ]
       },
       "timestamp": 1757095814614
+    },
+    {
+      "thoughtNumber": 1,
+      "code": "\n          ```typescript\n          function calculateSum(numbers: number[]): number {\n            return numbers.reduce((sum, num) => sum + num, 0);\n          }\n          \n          function calculateAverage(numbers: number[]): number {\n            if (numbers.length === 0) return 0;\n            return calculateSum(numbers) / numbers.length;\n          }\n          ```\n        ",
+      "auditResult": {
+        "overall": 85,
+        "dimensions": [
+          {
+            "name": "accuracy",
+            "score": 90
+          },
+          {
+            "name": "completeness",
+            "score": 80
+          },
+          {
+            "name": "clarity",
+            "score": 85
+          },
+          {
+            "name": "actionability",
+            "score": 85
+          },
+          {
+            "name": "human_likeness",
+            "score": 85
+          }
+        ],
+        "verdict": "pass",
+        "review": {
+          "summary": "Good implementation with room for improvement",
+          "inline": [],
+          "citations": []
+        },
+        "proposed_diff": null,
+        "iterations": 1,
+        "judge_cards": [
+          {
+            "model": "test-judge",
+            "score": 85,
+            "notes": "Test review with detailed feedback"
+          }
+        ]
+      },
+      "timestamp": 1757109764096
     }
   ],
   "currentLoop": 1,
   "isComplete": false,
   "codexContextActive": false,
   "createdAt": 1757033770159,
-  "updatedAt": 1757095814615
+  "updatedAt": 1757109764096
 }

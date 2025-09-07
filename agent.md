@@ -2,6 +2,8 @@
 
 This document provides comprehensive instructions for LLM agents on how to effectively operate the GansAuditor_Codex tool for iterative code improvement and quality assessment.
 
+**IMPORTANT**: GansAuditor_Codex requires Codex CLI to be installed and properly configured. The system will fail immediately if Codex CLI is not available - there are no fallback or mock responses in production.
+
 ## System Overview
 
 GansAuditor_Codex is a sophisticated MCP tool that combines sequential thinking with GAN-style adversarial code auditing. It provides immediate feedback for iterative code improvement through a synchronous workflow system.

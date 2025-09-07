@@ -249,12 +249,14 @@ export class PromptCacheManager {
     enhanceResultWithMetadata(result, context, executionDuration) {
         return {
             ...result,
-            metadata: {
-                ...(result.metadata || {}),
-                promptExecution: {
+            prompt_metadata: {
+                ...(result.prompt_metadata || {}),
+                version: this.config.cacheKeyVersion.toString(),
+                renderedAt: Date.now(),
+                templatePath: this.getTemplateIdentifier(context.promptTemplate),
+                variables: {
                     duration: executionDuration,
                     cachedAt: Date.now(),
-                    promptTemplate: this.getTemplateIdentifier(context.promptTemplate),
                     cacheVersion: this.config.cacheKeyVersion,
                 },
             },

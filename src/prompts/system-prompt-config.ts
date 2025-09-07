@@ -1373,7 +1373,7 @@ export function generateEnvVarDocumentation(): string {
     doc += '|----------|-------------|------|---------|---------------|\n';
     
     for (const variable of section.vars) {
-      const options = variable.options ? variable.options.join(', ') : (variable.range || 'N/A');
+      const options = ('options' in variable && variable.options) ? variable.options.join(', ') : (('range' in variable && variable.range) || 'N/A');
       doc += `| \`${variable.name}\` | ${variable.description} | ${variable.type} | \`${variable.default}\` | ${options} |\n`;
     }
     

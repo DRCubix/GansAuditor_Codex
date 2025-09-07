@@ -200,6 +200,26 @@ export declare class SessionManager implements IGansAuditorCodexSessionManager {
      */
     addAuditToHistory(sessionId: string, thoughtNumber: number, review: any, config: GansAuditorCodexSessionConfig): Promise<void>;
     /**
+     * Record Codex failure in session state
+     * Requirements: 4.1, 4.5 - Handle Codex failures properly without fallbacks
+     */
+    recordCodexFailure(sessionId: string, thoughtNumber: number, error: Error, context?: Record<string, any>): Promise<void>;
+    /**
+     * Check if session has recent Codex failures
+     * Requirements: 4.1, 4.5 - Track Codex failure patterns
+     */
+    hasRecentCodexFailures(sessionId: string, withinMinutes?: number): Promise<boolean>;
+    /**
+     * Get Codex failure summary for session
+     * Requirements: 4.1, 4.5 - Provide diagnostic information for Codex failures
+     */
+    getCodexFailureSummary(sessionId: string): Promise<{
+        totalFailures: number;
+        recentFailures: number;
+        lastFailureTime?: number;
+        commonErrorTypes: string[];
+    }>;
+    /**
      * Clean up old or corrupted sessions
      * Requirement 3.5: Session cleanup
      */

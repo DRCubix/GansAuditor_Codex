@@ -12,7 +12,7 @@ import { mkdirSync, rmSync } from 'fs';
 import { GanAuditor } from '../auditor/gan-auditor.js';
 import { SessionManager } from '../session/session-manager.js';
 import { ContextPacker } from '../context/context-packer.js';
-import { MockCodexJudge } from '../codex/mock-codex-judge.js';
+import { MockCodexJudge } from './mocks/mock-codex-judge.js';
 import { ThoughtData, SessionConfig } from '../types/gan-types.js';
 import { createTestRepository, sampleRepositories } from './fixtures/sample-repositories.js';
 

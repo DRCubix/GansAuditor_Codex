@@ -15,7 +15,7 @@ import {
   CodexResponseError,
   type CodexJudgeConfig,
 } from '../codex-judge.js';
-import { createMockAuditRequest, createMockGanReview } from '../mock-codex-judge.js';
+import { createMockAuditRequest, createMockGanReview } from '../../__tests__/mocks/mock-codex-judge.js';
 import { DEFAULT_AUDIT_RUBRIC } from '../../types/gan-types.js';
 
 // Mock child_process.spawn
@@ -153,12 +153,9 @@ describe('GansAuditor_Codex CodexJudge', () => {
 
       // Don't emit close event to simulate timeout
       // The timeout will be triggered by the CodexJudge implementation
-      // Since timeout returns fallback response, we expect a GanReview, not an error
+      // Now that fallbacks are removed, we expect a timeout error to be thrown
 
-      const result = await codexJudge.executeAudit(mockRequest);
-      expect(result.verdict).toBe('revise');
-      expect(result.judge_cards[0].model).toBe('fallback');
-      expect(result.review.summary).toContain('could not be completed');
+      await expect(codexJudge.executeAudit(mockRequest)).rejects.toThrow('Codex CLI execution timed out');
     });
 
     it('should handle Codex CLI execution errors', async () => {
@@ -377,7 +374,7 @@ describe('GansAuditor_Codex CodexJudge', () => {
   });
 
   describe('error handling', () => {
-    it('should create appropriate fallback response for timeout', async () => {
+    it('should throw timeout error instead of fallback response', async () => {
       const mockRequest = createMockAuditRequest();
       
       // Create a CodexJudge with very short timeout for testing
@@ -404,11 +401,8 @@ describe('GansAuditor_Codex CodexJudge', () => {
         return mockChild as any;
       });
       
-      const result = await shortTimeoutJudge.executeAudit(mockRequest);
-      
-      expect(result.verdict).toBe('revise');
-      expect(result.review.summary).toContain('could not be completed');
-      expect(result.judge_cards[0].model).toBe('fallback');
+      // Should throw timeout error instead of returning fallback
+      await expect(shortTimeoutJudge.executeAudit(mockRequest)).rejects.toThrow('Codex CLI execution timed out');
     });
 
     it('should handle process spawn errors', async () => {

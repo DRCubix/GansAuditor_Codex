@@ -78,22 +78,6 @@ export declare class GanAuditor implements IGanAuditor {
      */
     private mergeInlineConfigWithErrorHandling;
     /**
-     * Create fallback session for error scenarios
-     */
-    private createFallbackSession;
-    /**
-     * Build fallback context when normal context building fails
-     */
-    private buildFallbackContext;
-    /**
-     * Create fallback audit result
-     */
-    private createFallbackAuditResult;
-    /**
-     * Persist audit results with error handling
-     */
-    private persistAuditResultsWithErrorHandling;
-    /**
      * Build repository context based on session configuration
      */
     private buildContext;
@@ -102,7 +86,8 @@ export declare class GanAuditor implements IGanAuditor {
      */
     private createAuditRequest;
     /**
-     * Execute audit using Codex judge
+     * Execute audit using Codex judge - NO FALLBACKS
+     * Requirements: 4.1, 4.5 - Remove graceful degradation and mock responses
      */
     private executeAudit;
     /**
@@ -110,9 +95,14 @@ export declare class GanAuditor implements IGanAuditor {
      */
     private persistAuditResults;
     /**
-     * Create fallback review for error scenarios
+     * REMOVED: createFallbackReview method
+     *
+     * This method has been removed as part of the production fix to eliminate
+     * all fallback response generation. In production, errors must be handled
+     * explicitly without generating mock or fallback audit results.
+     *
+     * Requirements: 4.1, 5.1, 5.3, 5.5 - Remove all fallback response generation
      */
-    private createFallbackReview;
     /**
      * Merge configuration with defaults
      */

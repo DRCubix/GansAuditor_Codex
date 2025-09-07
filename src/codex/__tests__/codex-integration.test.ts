@@ -7,7 +7,7 @@
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { CodexJudge, CodexNotAvailableError } from '../codex-judge.js';
-import { MockCodexJudge, createMockAuditRequest, createMockGanReview } from '../mock-codex-judge.js';
+import { MockCodexJudge, createMockAuditRequest, createMockGanReview } from '../../__tests__/mocks/mock-codex-judge.js';
 import { DEFAULT_AUDIT_RUBRIC } from '../../types/gan-types.js';
 import type { AuditRequest, GanReview } from '../../types/integration-types.js';
 

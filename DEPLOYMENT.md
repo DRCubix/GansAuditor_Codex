@@ -4,10 +4,34 @@ This guide provides comprehensive instructions for deploying GansAuditor_Codex i
 
 ## Prerequisites
 
+**CRITICAL REQUIREMENT**: Codex CLI must be installed and properly configured on all deployment targets.
+
+### Required Software
+- **Codex CLI**: Must be installed and available in PATH
 - Node.js 18+ installed
 - npm or yarn package manager
 - Docker (for containerized deployment)
 - Git (for source deployment)
+
+### Codex CLI Installation Verification
+
+Before proceeding with any deployment, verify Codex CLI is properly installed:
+
+```bash
+# Check Codex CLI is available
+codex --version
+# Should display version information
+
+# Test basic execution
+codex exec "console.log('Deployment test')"
+# Should execute successfully
+
+# Verify PATH configuration
+which codex
+# Should show the path to codex executable
+```
+
+**If Codex CLI is not available, the deployment will fail immediately with clear error messages.**
 
 ## Deployment Options
 
@@ -15,13 +39,22 @@ This guide provides comprehensive instructions for deploying GansAuditor_Codex i
 
 #### Quick Setup
 ```bash
+# Verify Codex CLI first (REQUIRED)
+codex --version
+# Must succeed before proceeding
+
 # Clone and build
 git clone <your-repository-url>
 cd GansAuditor_Codex
 npm install
+
+# Validate Codex CLI integration
+npm run validate:codex
+
+# Build the server
 npm run build
 
-# Test the server
+# Test the server (will fail if Codex CLI not available)
 node dist/index.js
 # Should show: "GansAuditor_Codex MCP Server running on stdio"
 ```
@@ -62,6 +95,10 @@ ENABLE_AUDIT_CACHING=true
 
 #### Build for Production
 ```bash
+# Validate Codex CLI availability (CRITICAL)
+codex --version
+npm run validate:codex
+
 # Clean build
 npm run clean
 npm run rebuild
@@ -69,10 +106,10 @@ npm run rebuild
 # Validate configuration
 npm run validate-config
 
-# Run tests
-npm run test:run
+# Run production tests (requires Codex CLI)
+npm run test:production
 
-# Verify build
+# Verify build and Codex integration
 node dist/index.js --version
 ```
 

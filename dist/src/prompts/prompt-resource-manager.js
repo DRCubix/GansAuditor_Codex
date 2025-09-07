@@ -327,7 +327,7 @@ export class PromptResourceManager extends EventEmitter {
         }
         // Emit critical alerts
         for (const critical of limitStatus.critical) {
-            this.componentLogger.error('Resource critical', { critical });
+            this.componentLogger.error('Resource critical', new Error(critical));
             this.emit('resourceCritical', critical, metrics);
         }
         // Trigger automatic cleanup if memory pressure is high

@@ -191,6 +191,18 @@ export interface GansAuditorCodexSessionState {
     lastGan?: GansAuditorCodexReview;
     createdAt: number;
     updatedAt: number;
+    /** Track Codex CLI failures for diagnostic purposes */
+    codexFailures?: Array<{
+        timestamp: number;
+        thoughtNumber: number;
+        errorType: string;
+        errorMessage: string;
+        context: Record<string, any>;
+    }>;
+    /** Flag indicating if session has experienced Codex issues */
+    hasCodexIssues?: boolean;
+    /** Timestamp of last Codex failure */
+    lastCodexFailure?: number;
     /** Workflow step execution history for audit tracking */
     workflowHistory?: Array<{
         timestamp: number;

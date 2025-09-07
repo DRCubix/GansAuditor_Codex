@@ -219,7 +219,6 @@ export class CodexError extends GanAuditorError {
       suggestions.length > 0 ? suggestions : [
         "Ensure Codex CLI is installed and available in PATH",
         "Check Codex CLI configuration and permissions",
-        "The system will provide fallback audit results",
       ],
       context,
       component
@@ -261,7 +260,6 @@ export class CodexTimeoutError extends CodexError {
         "Increase the timeout configuration for Codex CLI",
         "Check system resources and Codex CLI performance",
         "Consider reducing the context size for faster processing",
-        "The system will provide a fallback audit result",
       ],
       { timeout, command },
       "codex-execution"
@@ -281,7 +279,6 @@ export class CodexResponseError extends CodexError {
       [
         "Check Codex CLI output format and version compatibility",
         "Verify Codex CLI is returning valid JSON responses",
-        "The system will attempt greedy parsing as fallback",
         "Consider updating Codex CLI to the latest version",
       ],
       { rawResponse: rawResponse?.substring(0, 500) },
@@ -475,7 +472,6 @@ export class AuditServiceUnavailableError extends CodexError {
         "Check if the audit service is running and accessible",
         "Verify network connectivity to the audit service",
         "Ensure audit service configuration is correct",
-        "The system will provide a fallback audit result with limited functionality",
         "You can continue working and retry the audit later",
       ],
       { service, details, timestamp: Date.now() },
@@ -785,7 +781,7 @@ export class ErrorRecovery {
         baseSuggestions.push("The system will use default configuration values");
         break;
       case "codex":
-        baseSuggestions.push("The system will provide fallback audit results");
+        baseSuggestions.push("System will fail fast - no fallback audit results available");
         break;
       case "filesystem":
         baseSuggestions.push("The system will skip inaccessible files");
@@ -806,10 +802,8 @@ export class ErrorRecovery {
       case "config":
         return { useDefaults: true, message: "Using default configuration" };
       case "codex":
-        return { 
-          fallbackAudit: true, 
-          message: "Audit completed with limited functionality" 
-        };
+        // No fallback data for Codex errors - must fail fast
+        throw error;
       case "filesystem":
         return { 
           partialData: true, 

@@ -40,10 +40,10 @@ export const DEFAULT_COMPLETION_CRITERIA: CompletionCriteria = {
  * Requirements: 7.1, 7.2, 9.1
  */
 export const DEFAULT_AUDIT_TIMEOUT_CONFIG: AuditTimeoutConfig = {
-  auditTimeoutSeconds: 30,
-  progressIndicatorInterval: 5000, // 5 seconds
+  auditTimeoutSeconds: 90, // Increase from 30 to 90 seconds for MCP environment
+  progressIndicatorInterval: 10000, // 10 seconds
   enableProgressIndicators: true,
-  timeoutRetryAttempts: 1,
+  timeoutRetryAttempts: 2, // Increase retry attempts
   partialResultsOnTimeout: true,
 };
 

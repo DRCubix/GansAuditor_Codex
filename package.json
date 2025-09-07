@@ -26,6 +26,10 @@
     "clean": "shx rm -rf dist",
     "rebuild": "npm run clean && npm run build",
     "validate-config": "node scripts/validate-config.js",
+    "validate:codex": "scripts/validate-codex-installation.sh",
+    "validate:environment": "scripts/validate-environment.sh",
+    "validate:production": "scripts/validate-production-readiness.sh",
+    "validate:health": "scripts/deployment-health-check.sh",
     "validate-config:json": "node scripts/validate-config.js --json",
     "config:validate": "node scripts/system-prompt-config.js validate",
     "config:validate-file": "node scripts/system-prompt-config.js validate",
@@ -49,7 +53,9 @@
   "dependencies": {
     "@modelcontextprotocol/sdk": "0.5.0",
     "chalk": "^5.3.0",
-    "yargs": "^17.7.2"
+    "dotenv": "^17.2.1",
+    "yargs": "^17.7.2",
+    "zod": "^4.0.17"
   },
   "devDependencies": {
     "@types/node": "^22",

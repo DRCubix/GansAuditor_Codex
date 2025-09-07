@@ -9,8 +9,10 @@
  * - 7.5: Structured error responses with actionable suggestions
  */
 import { ErrorClassifier, ErrorRecovery, } from '../types/error-types.js';
+import { errorDiagnosticSystem } from './error-diagnostic-system.js';
+import { generateInstallationGuidance, checkVersionCompatibility, createTroubleshootingGuide } from './installation-guidance.js';
 import { logger, createTimer } from './logger.js';
-import { DEFAULT_GANSAUDITOR_CODEX_SESSION_CONFIG, DEFAULT_AUDIT_RUBRIC } from '../types/gan-types.js';
+import { DEFAULT_GANSAUDITOR_CODEX_SESSION_CONFIG } from '../types/gan-types.js';
 /**
  * Default error handler configuration
  */
@@ -144,6 +146,27 @@ export class ErrorHandler {
         return classifiedError.toStructuredResponse(fallback);
     }
     /**
+     * Create comprehensive diagnostic response for Codex errors
+     */
+    async createDiagnosticResponse(error, executionContext) {
+        const errorObj = error instanceof Error ? error : new Error(String(error));
+        // Generate comprehensive diagnostic
+        const diagnostic = await errorDiagnosticSystem.diagnoseCodexError(errorObj, executionContext);
+        // Create structured response with diagnostic information
+        const classifiedError = ErrorClassifier.classify(error);
+        const structuredResponse = classifiedError.toStructuredResponse({
+            diagnostic: {
+                category: diagnostic.category,
+                severity: diagnostic.severity,
+                suggestions: diagnostic.suggestions,
+                documentationLinks: diagnostic.documentationLinks,
+            },
+            timestamp: diagnostic.timestamp,
+            context: diagnostic.context,
+        });
+        return { diagnostic, structuredResponse };
+    }
+    /**
      * Aggregate multiple errors into a summary
      */
     aggregateErrors(errors) {
@@ -234,7 +257,8 @@ export class ErrorHandler {
             case 'config':
                 return this.createFallbackConfig();
             case 'codex':
-                return this.createFallbackAuditResult();
+                // No fallback for Codex errors - must fail fast
+                throw error;
             case 'filesystem':
                 return null; // Skip the file/operation
             case 'session':
@@ -249,32 +273,7 @@ export class ErrorHandler {
     createFallbackConfig() {
         return { ...DEFAULT_GANSAUDITOR_CODEX_SESSION_CONFIG };
     }
-    /**
-     * Create fallback audit result
-     */
-    createFallbackAuditResult() {
-        const fallbackScore = 50;
-        return {
-            overall: fallbackScore,
-            dimensions: DEFAULT_AUDIT_RUBRIC.dimensions.map(d => ({
-                name: d.name,
-                score: fallbackScore,
-            })),
-            verdict: 'revise',
-            review: {
-                summary: 'Audit completed with limited functionality due to system limitations. Please review manually.',
-                inline: [],
-                citations: [],
-            },
-            proposed_diff: null,
-            iterations: 1,
-            judge_cards: [{
-                    model: 'fallback',
-                    score: fallbackScore,
-                    notes: 'Fallback response due to system error',
-                }],
-        };
-    }
+    // createFallbackAuditResult method removed - production code must fail fast on errors
     /**
      * Create fallback session data
      */
@@ -391,6 +390,30 @@ export async function withTimeout(operation, timeoutMs, timeoutMessage = 'Operat
 export function createErrorResponse(error, context, fallbackData) {
     return errorHandler.createErrorResponse(error, context, fallbackData);
 }
+/**
+ * Create comprehensive diagnostic response for Codex errors
+ */
+export async function createDiagnosticResponse(error, executionContext) {
+    return errorHandler.createDiagnosticResponse(error, executionContext);
+}
+/**
+ * Generate comprehensive installation guidance for Codex CLI
+ */
+export async function getInstallationGuidance() {
+    return generateInstallationGuidance();
+}
+/**
+ * Check Codex CLI version compatibility
+ */
+export async function getVersionCompatibility() {
+    return checkVersionCompatibility();
+}
+/**
+ * Create troubleshooting guide for common issues
+ */
+export async function getTroubleshootingGuide() {
+    return createTroubleshootingGuide();
+}
 // ============================================================================
 // Specialized Error Handlers
 // ============================================================================
@@ -401,14 +424,7 @@ export async function handleConfigError(error, defaultConfig) {
     const result = await handleError(error, 'configuration-parsing', defaultConfig);
     return result.result || defaultConfig;
 }
-/**
- * Handle Codex errors with fallback audit results
- */
-export async function handleCodexError(error, context = 'codex-execution') {
-    const fallbackAudit = errorHandler.createFallbackAuditResult();
-    const result = await handleError(error, context, fallbackAudit);
-    return result.result || fallbackAudit;
-}
+// handleCodexError function removed - production code must fail fast on Codex errors
 /**
  * Handle file system errors with graceful skipping
  */

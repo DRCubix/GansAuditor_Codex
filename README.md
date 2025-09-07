@@ -44,9 +44,31 @@ The synchronous workflow enables:
 
 ## Installation & Setup
 
+### Prerequisites
+
+**IMPORTANT**: GansAuditor_Codex requires the Codex CLI to be installed and properly configured for production use. The system will fail to start if Codex CLI is not available.
+
+#### Install Codex CLI
+
+1. **Install Codex CLI** following the official installation guide
+2. **Verify installation**:
+   ```bash
+   codex --version
+   # Should display version information
+   ```
+3. **Configure API access** (if required by your Codex CLI setup)
+4. **Test basic functionality**:
+   ```bash
+   codex exec "console.log('Hello World')"
+   # Should execute successfully
+   ```
+
 ### Quick Start with uvx (Recommended)
 
 ```bash
+# Ensure Codex CLI is installed first
+codex --version
+
 # Install and run with uvx
 uvx @modelcontextprotocol/server-gansauditor-codex@latest
 ```
@@ -54,11 +76,17 @@ uvx @modelcontextprotocol/server-gansauditor-codex@latest
 ### Manual Installation
 
 ```bash
+# Ensure Codex CLI is installed first
+codex --version
+
 # Clone and build
 git clone <repository-url>
 cd GansAuditor_Codex
 npm install
 npm run build
+
+# Validate Codex CLI integration
+npm run validate-codex
 
 # Test the server
 node dist/index.js
@@ -368,19 +396,40 @@ Use `branchId` to maintain audit context across multiple tool calls:
 
 ## Testing
 
+**Note**: All tests require Codex CLI to be installed and available in PATH. Mock functionality has been completely removed from the production codebase.
+
 Run the comprehensive test suite:
 
 ```bash
-# Run all tests
+# Validate Codex CLI is available
+codex --version
+
+# Run all tests (requires Codex CLI)
 npm test
 
 # Run with coverage
 npm run test:coverage
 
-# Test specific functionality
-node test-mcp-server.js
-node test-mcp-server-with-auditing.js
-node integration-test.js
+# Test Codex CLI integration specifically
+npm run test:codex-integration
+
+# Test production deployment
+npm run test:production
+```
+
+### Production Validation
+
+Before deploying to production, run the validation suite:
+
+```bash
+# Comprehensive production readiness check
+npm run validate:production
+
+# Codex CLI integration validation
+npm run validate:codex
+
+# Configuration validation
+npm run validate:config
 ```
 
 ## Documentation

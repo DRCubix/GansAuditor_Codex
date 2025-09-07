@@ -395,12 +395,14 @@ export class PromptCacheManager {
   ): GansAuditorCodexReview {
     return {
       ...result,
-      metadata: {
-        ...((result as any).metadata || {}),
-        promptExecution: {
+      prompt_metadata: {
+        ...((result as any).prompt_metadata || {}),
+        version: this.config.cacheKeyVersion.toString(),
+        renderedAt: Date.now(),
+        templatePath: this.getTemplateIdentifier(context.promptTemplate),
+        variables: {
           duration: executionDuration,
           cachedAt: Date.now(),
-          promptTemplate: this.getTemplateIdentifier(context.promptTemplate),
           cacheVersion: this.config.cacheKeyVersion,
         },
       },

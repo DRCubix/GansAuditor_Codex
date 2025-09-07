@@ -180,12 +180,6 @@ export declare class SynchronousAuditEngine {
      */
     private createSkippedReview;
     /**
-     * Create fallback review for error scenarios
-     *
-     * Requirement 1.4: Error handling for audit failures and timeouts
-     */
-    private createFallbackReview;
-    /**
      * Validate code format before processing (Requirement 7.2)
      */
     private validateCodeFormat;

@@ -2,18 +2,42 @@
 
 This guide will get you up and running with GansAuditor_Codex in under 5 minutes.
 
+## Prerequisites
+
+**CRITICAL**: GansAuditor_Codex requires Codex CLI to be installed and properly configured. The system will not start without it.
+
+### Install Codex CLI
+
+1. **Install Codex CLI** following the official installation guide for your platform
+2. **Add to PATH**: Ensure `codex` command is available in your PATH
+3. **Verify installation**:
+   ```bash
+   codex --version
+   # Should display version information without errors
+   ```
+4. **Test execution**:
+   ```bash
+   codex exec "console.log('test')"
+   # Should execute successfully
+   ```
+
+If Codex CLI is not properly installed, the server will fail to start with clear error messages and installation guidance.
+
 ## Quick Start (Recommended)
 
 ### 1. Deploy Locally
 ```bash
+# Verify Codex CLI is available
+codex --version
+
 # Clone the repository
 git clone <your-repository-url>
 cd GansAuditor_Codex
 
-# Run the deployment script
+# Run the deployment script (includes Codex validation)
 ./deploy.sh local
 
-# Verify the deployment
+# Verify the deployment (includes Codex integration tests)
 ./verify-deployment.sh local
 ```
 
@@ -224,8 +248,15 @@ cp config/production.env .env
 
 ### Server Won't Start
 ```bash
+# Check Codex CLI availability (most common issue)
+codex --version
+# If this fails, install Codex CLI first
+
 # Check Node.js version
 node --version  # Should be 18+
+
+# Validate Codex integration
+npm run validate:codex
 
 # Rebuild
 npm run rebuild

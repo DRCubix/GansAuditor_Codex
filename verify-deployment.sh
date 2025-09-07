@@ -97,6 +97,16 @@ test_tool_functionality() {
 verify_local() {
     log_info "Verifying local deployment..."
     
+    # Validate Codex CLI first
+    log_info "Validating Codex CLI installation..."
+    if ./scripts/validate-codex-installation.sh --json >/dev/null 2>&1; then
+        log_success "Codex CLI validation passed"
+    else
+        log_error "Codex CLI validation failed"
+        log_error "Run './scripts/validate-codex-installation.sh' for detailed diagnosis"
+        return 1
+    fi
+    
     # Check if built
     if [ ! -f "dist/index.js" ]; then
         log_error "dist/index.js not found. Run './deploy.sh local' first."
@@ -287,6 +297,16 @@ main() {
     test_configuration
     echo ""
     performance_test "$deployment_type"
+    
+    # Run comprehensive health check
+    echo ""
+    log_info "Running comprehensive health check..."
+    if ./scripts/deployment-health-check.sh --type "$deployment_type" --json >/dev/null 2>&1; then
+        log_success "Comprehensive health check passed"
+    else
+        log_warning "Health check found issues"
+        log_warning "Run './scripts/deployment-health-check.sh --type $deployment_type' for details"
+    fi
     
     echo ""
     log_success "🎉 Verification completed!"

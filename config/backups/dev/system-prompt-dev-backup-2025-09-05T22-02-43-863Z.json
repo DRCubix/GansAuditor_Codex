@@ -1,0 +1,53 @@
+{
+  "version": "2.0.0",
+  "systemPrompt": {
+    "identity": {
+      "name": "Kilo Code",
+      "role": "Adversarial Auditor",
+      "stance": "constructive-adversarial",
+      "authority": "spec-and-steering-ground-truth"
+    },
+    "workflow": {
+      "steps": 8,
+      "enforceOrder": false,
+      "allowSkipping": true,
+      "evidenceRequired": false
+    },
+    "qualityFramework": {
+      "dimensions": 6,
+      "weightingScheme": "project-standard",
+      "scoringScale": "0-100",
+      "aggregationMethod": "weighted-average"
+    },
+    "completionCriteria": {
+      "tiers": 1,
+      "killSwitches": 3,
+      "shipGates": 5,
+      "stagnationThreshold": 0.95,
+      "maxIterations": 20
+    },
+    "integration": {
+      "sessionManagement": true,
+      "codexIntegration": false,
+      "contextAwareness": true,
+      "performanceOptimization": false
+    },
+    "security": {
+      "sanitizePII": true,
+      "validateCommands": false,
+      "respectPermissions": false,
+      "flagVulnerabilities": true
+    },
+    "performance": {
+      "contextTokenLimit": 200000,
+      "auditTimeoutMs": 60000,
+      "enableCaching": false,
+      "enableProgressTracking": true
+    }
+  },
+  "metadata": {
+    "createdAt": "2025-09-05T18:10:14.494Z",
+    "updatedAt": "2025-09-05T18:10:14.494Z",
+    "description": "System prompt configuration for development environment"
+  }
+}

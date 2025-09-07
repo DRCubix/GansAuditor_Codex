@@ -31,9 +31,7 @@ import { CodexJudge } from '../codex/codex-judge.js';
 import { 
   errorHandler, 
   withRetry, 
-  withGracefulDegradation,
   handleConfigError,
-  handleCodexError,
   handleSessionError,
   createErrorResponse,
 } from '../utils/error-handler.js';
@@ -135,90 +133,119 @@ export class GanAuditor implements IGanAuditor {
     try {
       this.componentLogger.info(`Starting audit for thought ${thought.thoughtNumber}`, { sessionId });
 
-      // Step 1: Load or create session with error handling
-      const session = await withGracefulDegradation(
-        () => this.loadOrCreateSession(thought, sessionId),
-        () => this.createFallbackSession(thought, sessionId),
-        'session-loading'
-      );
+      // Step 1: Load or create session - fail fast on errors
+      const session = await this.loadOrCreateSession(thought, sessionId);
       
-      if (session.degraded) {
-        this.componentLogger.warn('Using fallback session due to loading issues', { sessionId });
-      }
-      
-      this.componentLogger.debug(`Loaded session ${session.result.id}`, { 
-        sessionConfig: session.result.config,
-        degraded: session.degraded 
+      this.componentLogger.debug(`Loaded session ${session.id}`, { 
+        sessionConfig: session.config
       });
 
       // Step 2: Extract and merge inline configuration with error handling
       const mergedConfig = await this.mergeInlineConfigWithErrorHandling(
         thought.thought, 
-        session.result.config
+        session.config
       );
       
-      if (JSON.stringify(mergedConfig) !== JSON.stringify(session.result.config)) {
-        session.result.config = mergedConfig;
+      if (JSON.stringify(mergedConfig) !== JSON.stringify(session.config)) {
+        session.config = mergedConfig;
         
-        // Try to update session, but don't fail if it doesn't work
-        await withGracefulDegradation(
-          () => this.sessionManager.updateSession(session.result),
-          () => Promise.resolve(), // No-op fallback
-          'session-config-update'
-        );
+        // Update session - fail fast on errors
+        await this.sessionManager.updateSession(session);
         
         this.componentLogger.debug('Updated session config with inline configuration', { 
           newConfig: mergedConfig 
         });
       }
 
-      // Step 3: Build repository context with error handling
-      const contextResult = await withGracefulDegradation(
-        () => this.buildContext(session.result.config),
-        () => this.buildFallbackContext(),
-        'context-building'
-      );
+      // Step 3: Build repository context - fail fast on errors
+      const contextPack = await this.buildContext(session.config);
       
-      this.componentLogger.debug(`Built context pack (${contextResult.result.length} characters)`, { 
-        scope: session.result.config.scope,
-        degraded: contextResult.degraded 
+      this.componentLogger.debug(`Built context pack (${contextPack.length} characters)`, { 
+        scope: session.config.scope
       });
 
-      // Step 4: Execute audit with comprehensive error handling
-      const auditRequest = this.createAuditRequest(thought, contextResult.result, session.result.config);
-      const auditResult = await withGracefulDegradation(
-        () => this.executeAudit(auditRequest),
-        () => this.createFallbackAuditResult(auditRequest, contextResult.error),
-        'audit-execution'
-      );
+      // Step 4: Execute audit - fail fast on errors
+      const auditRequest = this.createAuditRequest(thought, contextPack, session.config);
+      const auditResult = await this.executeAudit(auditRequest);
       
-      this.componentLogger.info(`Audit completed with verdict: ${auditResult.result.verdict}`, { 
-        overall: auditResult.result.overall, 
-        iterations: auditResult.result.iterations,
-        degraded: auditResult.degraded
+      this.componentLogger.info(`Audit completed with verdict: ${auditResult.verdict}`, { 
+        overall: auditResult.overall, 
+        iterations: auditResult.iterations
       });
 
-      // Step 5: Process and persist results (non-critical, continue on failure)
-      await this.persistAuditResultsWithErrorHandling(session.result, thought, auditResult.result);
+      // Step 5: Process and persist results - fail fast on errors
+      await this.persistAuditResults(session, thought, auditResult);
 
       timer.end({ 
-        verdict: auditResult.result.verdict,
-        degraded: auditResult.degraded || contextResult.degraded || session.degraded 
+        verdict: auditResult.verdict
       });
       
-      return auditResult.result;
+      return auditResult;
     } catch (error) {
       timer.endWithError(error as Error);
       
-      // Create and return fallback audit result instead of throwing
-      const fallbackResult = await handleCodexError(error, 'audit-thought-fallback');
-      
-      this.componentLogger.error('Audit failed, returning fallback result', error as Error, {
+      // Enhanced error logging with diagnostic information
+      this.componentLogger.error('Audit failed - no fallback available', error as Error, {
         thoughtNumber: thought.thoughtNumber,
-        sessionId
+        sessionId,
+        errorType: error instanceof Error ? error.constructor.name : 'Unknown',
+        errorMessage: error instanceof Error ? error.message : String(error),
+        timestamp: new Date().toISOString()
       });
       
-      return fallbackResult;
+      // Check if this is a Codex-related error and provide additional context
+      if (error instanceof Error) {
+        // Log additional diagnostic information for Codex errors
+        if (error.message.includes('codex') || error.message.includes('Codex')) {
+          this.componentLogger.error('Codex CLI integration error detected', undefined, {
+            suggestion: 'Check Codex CLI installation and configuration',
+            troubleshooting: 'Verify CODEX_EXECUTABLE path and permissions',
+            documentation: 'See production deployment guide for Codex setup'
+          });
+        }
+        
+        // Record Codex failure in session for tracking
+        if (sessionId) {
+          try {
+            // TODO: Implement recordCodexFailure and getCodexFailureSummary methods
+            // await this.sessionManager.recordCodexFailure(
+            //   sessionId,
+            //   thought.thoughtNumber,
+            //   error,
+            //   {
+            //     auditStep: 'execution',
+            //     thoughtText: thought.thought.substring(0, 200), // First 200 chars for context
+            //     timestamp: new Date().toISOString()
+            //   }
+            // );
+            
+            // Get failure summary for additional context
+            // const failureSummary = await this.sessionManager.getCodexFailureSummary(sessionId);
+            this.componentLogger.warn('Codex failure recorded in session', {
+              sessionId,
+              // totalFailures: failureSummary.totalFailures,
+              // recentFailures: failureSummary.recentFailures,
+              // commonErrorTypes: failureSummary.commonErrorTypes
+            });
+            
+            // Log session state for debugging
+            const session = await this.sessionManager.getSession(sessionId);
+            this.componentLogger.debug('Session state at error', {
+              sessionId,
+              config: session?.config,
+              historyLength: session?.history.length,
+              isComplete: session?.isComplete,
+              hasCodexIssues: session?.hasCodexIssues
+            });
+          } catch (sessionError) {
+            this.componentLogger.warn('Could not record Codex failure in session', sessionError as Error);
+          }
+        }
+      }
+      
+      // Re-throw the error - no fallback responses in production
+      // The error should contain diagnostic information from ErrorDiagnosticSystem
+      throw error;
     }
   }
 
@@ -332,90 +359,9 @@ export class GanAuditor implements IGanAuditor {
     }
   }
 
-  /**
-   * Create fallback session for error scenarios
-   */
-  private async createFallbackSession(thought: ThoughtData, sessionId?: string): Promise<SessionState> {
-    const effectiveSessionId = sessionId || 
-                              thought.branchId || 
-                              `fallback-${Date.now()}`;
+  // Fallback methods removed - production code must fail fast on errors
 
-    this.componentLogger.warn(`Creating fallback session ${effectiveSessionId}`);
-    
-    return {
-      id: effectiveSessionId,
-      config: DEFAULT_SESSION_CONFIG,
-      history: [],
-      createdAt: Date.now(),
-      updatedAt: Date.now(),
-      // Enhanced fields for synchronous workflow
-      iterations: [],
-      currentLoop: 0,
-      isComplete: false,
-      codexContextActive: false,
-    };
-  }
-
-  /**
-   * Build fallback context when normal context building fails
-   */
-  private async buildFallbackContext(): Promise<string> {
-    return `# Fallback Context\n\nContext Build Failed. Proceeding with minimal context.\n\nTimestamp: ${new Date().toISOString()}\n`;
-  }
-
-  /**
-   * Create fallback audit result
-   */
-  private async createFallbackAuditResult(
-    request: AuditRequest, 
-    contextError?: GanAuditorError
-  ): Promise<GanReview> {
-    const fallbackScore = 50;
-    const errorMessage = contextError ? 
-      `Context building failed: ${contextError.message}` : 
-      'Codex execution failed';
-    
-    return {
-      overall: fallbackScore,
-      dimensions: DEFAULT_AUDIT_RUBRIC.dimensions.map(d => ({
-        name: d.name,
-        score: fallbackScore,
-      })),
-      verdict: 'revise',
-      review: {
-        summary: `Audit could not be completed due to an error: ${errorMessage}. Please review the code manually and ensure all dependencies are properly configured.`,
-        inline: [],
-        citations: [],
-      },
-      proposed_diff: null,
-      iterations: 1,
-      judge_cards: [{
-        model: 'fallback',
-        score: fallbackScore,
-        notes: `Fallback response: ${errorMessage}`,
-      }],
-    };
-  }
-
-  /**
-   * Persist audit results with error handling
-   */
-  private async persistAuditResultsWithErrorHandling(
-    session: SessionState, 
-    thought: ThoughtData, 
-    review: GanReview
-  ): Promise<void> {
-    try {
-      await this.persistAuditResults(session, thought, review);
-    } catch (error) {
-      // Log the error but don't fail the audit
-      this.componentLogger.error('Failed to persist audit results, continuing without persistence', 
-        error as Error, { 
-          sessionId: session.id,
-          thoughtNumber: thought.thoughtNumber 
-        });
-    }
-  }
+  // persistAuditResultsWithErrorHandling removed - use direct persistAuditResults call
 
   /**
    * Build repository context based on session configuration
@@ -454,11 +400,34 @@ export class GanAuditor implements IGanAuditor {
   }
 
   /**
-   * Execute audit using Codex judge
+   * Execute audit using Codex judge - NO FALLBACKS
+   * Requirements: 4.1, 4.5 - Remove graceful degradation and mock responses
    */
   private async executeAudit(request: AuditRequest): Promise<GanReview> {
-    // Execute once; rely on graceful degradation upstream to provide fallback
-    return await this.codexJudge.executeAudit(request);
+    try {
+      // Execute audit with strict error handling - no fallbacks allowed
+      const result = await this.codexJudge.executeAudit(request);
+      
+      this.componentLogger.debug('Codex audit completed successfully', {
+        verdict: result.verdict,
+        overall: result.overall,
+        iterations: result.iterations
+      });
+      
+      return result;
+    } catch (error) {
+      // Log the error with full context for debugging
+      this.componentLogger.error('Codex audit execution failed - no fallback available', error as Error, {
+        task: request.task,
+        candidateLength: request.candidate.length,
+        contextPackLength: request.contextPack.length,
+        budget: request.budget
+      });
+      
+      // Re-throw the error - no graceful degradation allowed
+      // The error should contain diagnostic information from ErrorDiagnosticSystem
+      throw error;
+    }
   }
 
   /**
@@ -482,32 +451,14 @@ export class GanAuditor implements IGanAuditor {
   }
 
   /**
-   * Create fallback review for error scenarios
+   * REMOVED: createFallbackReview method
+   * 
+   * This method has been removed as part of the production fix to eliminate
+   * all fallback response generation. In production, errors must be handled
+   * explicitly without generating mock or fallback audit results.
+   * 
+   * Requirements: 4.1, 5.1, 5.3, 5.5 - Remove all fallback response generation
    */
-  private createFallbackReview(errorMessage: string): GanReview {
-    const fallbackScore = 50; // Neutral score for error cases
-    
-    return {
-      overall: fallbackScore,
-      dimensions: DEFAULT_AUDIT_RUBRIC.dimensions.map(d => ({
-        name: d.name,
-        score: fallbackScore,
-      })),
-      verdict: 'revise',
-      review: {
-        summary: `Audit could not be completed due to an error: ${errorMessage}. Please review the code manually and ensure all dependencies are properly configured.`,
-        inline: [],
-        citations: [],
-      },
-      proposed_diff: null,
-      iterations: 1,
-      judge_cards: [{
-        model: 'fallback',
-        score: fallbackScore,
-        notes: `Fallback response due to: ${errorMessage}`,
-      }],
-    };
-  }
 
   /**
    * Merge configuration with defaults

@@ -1,5 +1,9 @@
 #!/usr/bin/env node
 
+// Load environment variables from .env file
+import dotenv from 'dotenv';
+dotenv.config();
+
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import {
@@ -350,9 +354,20 @@ class GansAuditorCodexServer {
         return await this.processAsynchronousWorkflow(validatedInput, standardResponse);
       }
     } catch (error) {
-      // Use the response formatter for consistent error formatting
-      const formatter = createResponseFormatter();
-      return formatter.formatErrorResponse(error instanceof Error ? error : String(error));
+      // Use structured error responses for better client debugging
+      const { createErrorResponseFromError, toMcpToolResponse } = await import('./src/types/mcp-error-response.js');
+      
+      const errorResponse = createErrorResponseFromError(error, {
+        thoughtNumber: (input as any)?.thoughtNumber,
+        branchId: (input as any)?.branchId,
+        operation: 'processThought',
+        timestamp: new Date().toISOString()
+      });
+      
+      // Log the error for server-side debugging
+      console.error(chalk.red(`⚠️  Process thought error: ${error instanceof Error ? error.message : String(error)}`));
+      
+      return toMcpToolResponse(errorResponse);
     }
   }
 
@@ -518,8 +533,19 @@ class GansAuditorCodexServer {
         }
       }
       
-      // Fall back to asynchronous workflow on error
-      return await this.processAsynchronousWorkflow(thought, standardResponse);
+      // Create structured error response instead of falling back
+      const { createErrorResponseFromError, toMcpToolResponse } = await import('./src/types/mcp-error-response.js');
+      
+      const errorResponse = createErrorResponseFromError(error, {
+        workflow: 'synchronous',
+        sessionId,
+        loopId,
+        thoughtNumber: thought.thoughtNumber,
+        operation: 'synchronousAudit',
+        timestamp: new Date().toISOString()
+      });
+      
+      return toMcpToolResponse(errorResponse);
     }
   }
 
@@ -541,10 +567,21 @@ class GansAuditorCodexServer {
         
         // Perform audit asynchronously but don't wait for it in the main flow
         // This maintains backward compatibility while adding audit capabilities
-        this.performAsyncAudit(thought, sessionId).catch(auditError => {
+        this.performAsyncAudit(thought, sessionId).catch(async auditError => {
           const envConfig = getEnvironmentConfigSummary();
           if (!envConfig.disableThoughtLogging) {
             console.error(chalk.red(`⚠️  GAN Audit failed: ${auditError instanceof Error ? auditError.message : String(auditError)}`));
+            
+            // Log structured error information for debugging
+            const { createErrorResponseFromError } = await import('./src/types/mcp-error-response.js');
+            const errorResponse = createErrorResponseFromError(auditError, {
+              workflow: 'asynchronous',
+              sessionId,
+              thoughtNumber: thought.thoughtNumber,
+              operation: 'asyncAudit'
+            });
+            
+            console.error(chalk.gray(`   Error details: ${JSON.stringify(errorResponse.diagnostic, null, 2)}`));
           }
         });
         
@@ -730,21 +767,123 @@ server.setRequestHandler(ListToolsRequestSchema, async () => ({
 }));
 
 server.setRequestHandler(CallToolRequestSchema, async (request) => {
-  if (request.params.name === "gansauditor_codex") {
-    const result = await gansAuditorCodexServer.processThought(request.params.arguments);
-    return result;
-  }
+  try {
+    if (request.params.name === "gansauditor_codex") {
+      const result = await gansAuditorCodexServer.processThought(request.params.arguments);
+      return result;
+    }
 
-  return {
-    content: [{
-      type: "text",
-      text: `Unknown tool: ${request.params.name}`
-    }],
-    isError: true
-  };
+    // Import error response utilities
+    const { createValidationError, toMcpToolResponse } = await import('./src/types/mcp-error-response.js');
+    
+    const errorResponse = createValidationError(
+      `Unknown tool: ${request.params.name}`,
+      `The requested tool '${request.params.name}' is not supported by this server`,
+      { 
+        requestedTool: request.params.name,
+        availableTools: ['gansauditor_codex'],
+        requestId: `req-${Date.now()}`
+      }
+    );
+    
+    return toMcpToolResponse(errorResponse);
+  } catch (error) {
+    // Import error response utilities for catch block
+    const { createErrorResponseFromError, toMcpToolResponse } = await import('./src/types/mcp-error-response.js');
+    
+    const errorResponse = createErrorResponseFromError(error, {
+      toolName: request.params.name,
+      requestId: `req-${Date.now()}`,
+      timestamp: new Date().toISOString()
+    });
+    
+    // Log the error for server-side debugging
+    console.error(chalk.red(`⚠️  MCP request handler error: ${error instanceof Error ? error.message : String(error)}`));
+    
+    return toMcpToolResponse(errorResponse);
+  }
 });
 
 async function runServer() {
+  // Validate Codex CLI availability before starting server
+  // Requirement 1.4: Fail-fast startup validation
+  const envConfig = getEnvironmentConfigSummary();
+  if (envConfig.enableGanAuditing) {
+    console.error(chalk.blue('🔍 Validating Codex CLI availability...'));
+    
+    try {
+      const { validateCodexAvailability } = await import('./src/codex/codex-validator.js');
+      const validationResult = await validateCodexAvailability({
+        timeout: 10000, // 10 second timeout for startup validation
+        minVersion: '0.29.0', // Support current Codex CLI version
+      });
+
+      if (!validationResult.isAvailable) {
+        console.error(chalk.red('❌ Codex CLI validation failed:'));
+        validationResult.environmentIssues.forEach(issue => {
+          console.error(chalk.red(`   - ${issue}`));
+        });
+        
+        console.error(chalk.yellow('\n💡 Recommendations:'));
+        validationResult.recommendations.forEach(rec => {
+          console.error(chalk.yellow(`   - ${rec}`));
+        });
+        
+        console.error(chalk.red('\n🚫 Server startup aborted due to Codex CLI unavailability.'));
+        console.error(chalk.gray('   Set ENABLE_GAN_AUDITING=false to disable Codex CLI requirement.'));
+        process.exit(1);
+      }
+
+      console.error(chalk.green('✅ Codex CLI validation successful'));
+      if (validationResult.version) {
+        console.error(chalk.gray(`   Version: ${validationResult.version}`));
+      }
+      if (validationResult.executablePath) {
+        console.error(chalk.gray(`   Path: ${validationResult.executablePath}`));
+      }
+    } catch (validationError) {
+      // Create structured error response for startup validation failure
+      const { createCodexError } = await import('./src/types/mcp-error-response.js');
+      
+      const errorResponse = createCodexError(
+        'Codex CLI validation failed during server startup',
+        validationError instanceof Error ? validationError.message : String(validationError),
+        {
+          phase: 'startup',
+          enableGanAuditing: envConfig.enableGanAuditing,
+          timestamp: new Date().toISOString()
+        }
+      );
+      
+      console.error(chalk.red('❌ Codex CLI validation error:'));
+      console.error(chalk.red(`   ${errorResponse.diagnostic.message}`));
+      
+      if (errorResponse.diagnostic.suggestions) {
+        console.error(chalk.yellow('\n💡 Suggestions:'));
+        errorResponse.diagnostic.suggestions.forEach(suggestion => {
+          console.error(chalk.yellow(`   - ${suggestion}`));
+        });
+      }
+      
+      if (errorResponse.diagnostic.documentationLinks) {
+        console.error(chalk.blue('\n📚 Documentation:'));
+        errorResponse.diagnostic.documentationLinks.forEach(link => {
+          console.error(chalk.blue(`   - ${link}`));
+        });
+      }
+      
+      console.error(chalk.red('\n🚫 Server startup aborted due to validation failure.'));
+      console.error(chalk.gray('   Set ENABLE_GAN_AUDITING=false to disable Codex CLI requirement.'));
+      
+      // Log structured error for debugging
+      console.error(chalk.gray(`\n🔍 Error details: ${JSON.stringify(errorResponse.diagnostic, null, 2)}`));
+      
+      process.exit(1);
+    }
+  } else {
+    console.error(chalk.yellow('⚠️  GAN auditing disabled - Codex CLI validation skipped'));
+  }
+
   const transport = new StdioServerTransport();
   await server.connect(transport);
   console.error("GansAuditor_Codex MCP Server running on stdio");
